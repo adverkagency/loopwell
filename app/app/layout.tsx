@@ -16,6 +16,14 @@ export default async function AppLayout({
 
   if (!user) redirect("/login");
 
+  // Partially-onboarded users never land on an empty Daily (IA §16)
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("onboarding_completed_at")
+    .eq("id", user.id)
+    .single();
+  if (!profile?.onboarding_completed_at) redirect("/onboarding");
+
   return (
     <div className="flex min-h-dvh flex-col md:flex-row">
       <AppNav />
