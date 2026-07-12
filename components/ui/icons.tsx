@@ -114,6 +114,20 @@ export const PillIcon = (p: IconProps) => (
   </svg>
 );
 
+export const AwardIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <circle cx="12" cy="9" r="5.5" />
+    <path d="M8.5 13.5L7 21l5-2.5 5 2.5-1.5-7.5" />
+  </svg>
+);
+
+export const LockIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <rect x="5" y="11" width="14" height="9" rx="2" />
+    <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+  </svg>
+);
+
 export const ChevronDownIcon = (p: IconProps) => (
   <svg {...base(p)} strokeWidth={2}>
     <polyline points="7,10 12,15 17,10" />
