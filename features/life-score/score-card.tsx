@@ -86,7 +86,7 @@ export function LifeScoreCard({
                   className="h-2 flex-1 overflow-hidden rounded-full bg-sunken"
                 >
                   <span
-                    className="block h-full rounded-full bg-teal-500"
+                    className="block h-full rounded-full bg-primary"
                     style={{ width: `${comp.ratio * 100}%` }}
                   />
                 </span>

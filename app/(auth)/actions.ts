@@ -9,7 +9,17 @@ import {
   resetPasswordSchema,
 } from "@/lib/validation/auth";
 
-export type AuthState = { error?: string; message?: string };
+export type AuthState = {
+  error?: string;
+  message?: string;
+  /** Submitted values echoed back on failure so the form can repopulate
+   *  after React's post-action reset. Never includes the password. */
+  values?: Record<string, string>;
+};
+
+function keepEmail(formData: FormData): Record<string, string> {
+  return { email: String(formData.get("email") ?? "") };
+}
 
 function siteUrl() {
   return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -24,7 +34,7 @@ export async function register(
     password: formData.get("password"),
   });
   if (!parsed.success) {
-    return { error: parsed.error.issues[0].message };
+    return { error: parsed.error.issues[0].message, values: keepEmail(formData) };
   }
 
   const supabase = await createClient();
@@ -36,9 +46,12 @@ export async function register(
 
   if (error) {
     if (error.code === "user_already_exists") {
-      return { error: "That email's already registered — log in instead?" };
+      return {
+        error: "That email's already registered — log in instead?",
+        values: keepEmail(formData),
+      };
     }
-    return { error: error.message };
+    return { error: error.message, values: keepEmail(formData) };
   }
 
   // Email verification is non-blocking (IA §16) — straight into onboarding.
@@ -54,13 +67,13 @@ export async function login(
     password: formData.get("password"),
   });
   if (!parsed.success) {
-    return { error: parsed.error.issues[0].message };
+    return { error: parsed.error.issues[0].message, values: keepEmail(formData) };
   }
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) {
-    return { error: "Wrong email or password." };
+    return { error: "Wrong email or password.", values: keepEmail(formData) };
   }
 
   const next = formData.get("next");
@@ -79,7 +92,7 @@ export async function forgotPassword(
 ): Promise<AuthState> {
   const parsed = forgotPasswordSchema.safeParse({ email: formData.get("email") });
   if (!parsed.success) {
-    return { error: parsed.error.issues[0].message };
+    return { error: parsed.error.issues[0].message, values: keepEmail(formData) };
   }
 
   const supabase = await createClient();

@@ -65,10 +65,13 @@ export function NutritionCard({
   const [, startTransition] = useTransition();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<FoodResult[]>([]);
+  const [searchStatus, setSearchStatus] = useState<"idle" | "searching" | "done">("idle");
   const [searchDown, setSearchDown] = useState(false);
   const [manual, setManual] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [justLogged, setJustLogged] = useState<string | null>(null);
   const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const loggedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (debounce.current) clearTimeout(debounce.current);
@@ -77,8 +80,10 @@ export function NutritionCard({
       async () => {
         if (q.length < 2) {
           setResults([]);
+          setSearchStatus("idle");
           return;
         }
+        setSearchStatus("searching");
         try {
           const res = await fetch(`/api/food-search?q=${encodeURIComponent(q)}`);
           const data = (await res.json()) as { results: FoodResult[]; degraded?: boolean };
@@ -88,6 +93,7 @@ export function NutritionCard({
           setResults([]);
           setSearchDown(true);
         }
+        setSearchStatus("done");
       },
       q.length < 2 ? 0 : 350
     );
@@ -100,9 +106,16 @@ export function NutritionCard({
     setError(null);
     setQuery("");
     setResults([]);
+    setSearchStatus("idle");
+    setJustLogged(f.name);
+    if (loggedTimer.current) clearTimeout(loggedTimer.current);
+    loggedTimer.current = setTimeout(() => setJustLogged(null), 2500);
     startTransition(async () => {
       const res = await addNutrition({ date: today, ...f, food_name: f.name });
-      if (res.error) setError(res.error);
+      if (res.error) {
+        setError(res.error);
+        setJustLogged(null);
+      }
     });
   }
 
@@ -123,7 +136,7 @@ export function NutritionCard({
       title="Nutrition"
       summary={
         entries.length === 0
-          ? "Nothing logged yet"
+          ? "Nothing yet — tap to log food"
           : `${Math.round(totals.cal).toLocaleString()} cal logged`
       }
     >
@@ -137,7 +150,7 @@ export function NutritionCard({
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search foods (USDA + Open Food Facts)…"
+            placeholder="Search foods…"
             className={inputCls}
           />
           {searchDown ? (
@@ -145,6 +158,9 @@ export function NutritionCard({
               Search is unavailable right now — log manually below instead.
             </p>
           ) : null}
+          <p aria-live="polite" className={`text-xs ${justLogged ? "font-medium text-success" : "text-ink-muted"} ${searchStatus === "searching" || justLogged ? "" : "sr-only"}`}>
+            {justLogged ? `Added ${justLogged}.` : searchStatus === "searching" ? "Searching…" : ""}
+          </p>
         </div>
 
         {results.length > 0 ? (
@@ -168,7 +184,7 @@ export function NutritionCard({
             ))}
           </ul>
         ) : null}
-        {query.trim().length >= 2 && results.length === 0 && !searchDown ? (
+        {query.trim().length >= 2 && searchStatus === "done" && results.length === 0 && !searchDown ? (
           <p className="text-xs text-ink-muted">
             No matches — log it manually below.
           </p>
@@ -298,7 +314,7 @@ function ManualFood({ today, onDone }: { today: string; onDone: () => void }) {
         ))}
       </div>
       {error ? <p role="alert" className="text-sm font-medium text-danger">{error}</p> : null}
-      <button type="submit" className="flex min-h-10 items-center self-start rounded-full bg-teal-500 px-5 text-sm font-semibold text-white transition hover:bg-teal-600">
+      <button type="submit" className="flex min-h-10 items-center self-start rounded-full bg-primary px-5 text-sm font-semibold text-on-primary transition hover:bg-primary-hover">
         Add food
       </button>
     </form>
@@ -355,7 +371,7 @@ export function WorkoutCard({
       title="Workout"
       summary={
         entries.length === 0
-          ? "No workout yet"
+          ? "None yet — tap to log a workout"
           : `${entries.length} exercise${entries.length > 1 ? "s" : ""} logged`
       }
     >
@@ -467,7 +483,7 @@ export function JournalCard({
   }
 
   return (
-    <ModuleCard title="Journal" summary={initialBody ? "Entry saved" : "No entry yet"}>
+    <ModuleCard title="Journal" summary={initialBody ? "Entry saved" : "No entry yet — tap to write"}>
       <div className="flex flex-col gap-3">
         <label htmlFor="journal-body" className="text-sm font-medium text-ink-secondary">
           Today&apos;s thoughts

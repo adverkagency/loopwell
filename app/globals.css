@@ -15,11 +15,17 @@
   --lw-bg-sunken: #f1ede4;       /* Sunken Sand */
   --lw-surface-hover: #f4f0e7;
   --lw-border: #e7e0d3;          /* Hairline */
-  --lw-border-strong: #cfc6b4;
+  --lw-border-strong: #98907c;   /* ≥3:1 vs paper/card — input + chip boundaries */
   --lw-ink: #22261e;
   --lw-ink-secondary: #565b4e;
-  --lw-ink-muted: #83877a;
+  --lw-ink-muted: #676c5d;       /* ≥4.5:1 on paper, card, and sunken */
   --lw-ink-inverse: #fbfaf6;
+
+  /* Filled-control pairs — bg + guaranteed-AA text on it */
+  --lw-primary: var(--lw-teal-600);
+  --lw-primary-hover: var(--lw-teal-700);
+  --lw-on-primary: #ffffff;
+  --lw-on-success: #ffffff;
 
   /* Primary — Loopwell Teal */
   --lw-teal-50: #eef8f6;
@@ -41,7 +47,7 @@
   --lw-coral-700: #b7621f;
 
   /* Semantic + habit states (No-Guilt Palette Rule) */
-  --lw-success: #3f9e6d;
+  --lw-success: #2f7f56;
   --lw-warning: #c98a1f;
   --lw-danger: #d1594a;
   --lw-info: #3d7fbf;
@@ -65,11 +71,17 @@
   --lw-bg-sunken: #0f1214;
   --lw-surface-hover: #232a2d;
   --lw-border: #2b3134;
-  --lw-border-strong: #3a4246;
+  --lw-border-strong: #626c71;
   --lw-ink: #f2f0ea;
   --lw-ink-secondary: #b7bcb4;
-  --lw-ink-muted: #7c8480;
+  --lw-ink-muted: #8a918d;
   --lw-ink-inverse: #1c2124;
+
+  /* Dark filled controls: bright teal needs dark ink, not white (2.5:1) */
+  --lw-primary: #4fb3a0;
+  --lw-primary-hover: #66c7b4;
+  --lw-on-primary: #0e211d;
+  --lw-on-success: #0e211d;
 
   --lw-teal-500: #4fb3a0;
   --lw-teal-600: #3f9987;
@@ -97,11 +109,15 @@
     --lw-bg-sunken: #0f1214;
     --lw-surface-hover: #232a2d;
     --lw-border: #2b3134;
-    --lw-border-strong: #3a4246;
+    --lw-border-strong: #626c71;
     --lw-ink: #f2f0ea;
     --lw-ink-secondary: #b7bcb4;
-    --lw-ink-muted: #7c8480;
+    --lw-ink-muted: #8a918d;
     --lw-ink-inverse: #1c2124;
+    --lw-primary: #4fb3a0;
+    --lw-primary-hover: #66c7b4;
+    --lw-on-primary: #0e211d;
+    --lw-on-success: #0e211d;
     --lw-teal-500: #4fb3a0;
     --lw-teal-600: #3f9987;
     --lw-coral-500: #ffab5c;
@@ -149,6 +165,11 @@
   --color-coral-500: var(--lw-coral-500);
   --color-coral-600: var(--lw-coral-600);
   --color-coral-700: var(--lw-coral-700);
+
+  --color-primary: var(--lw-primary);
+  --color-primary-hover: var(--lw-primary-hover);
+  --color-on-primary: var(--lw-on-primary);
+  --color-on-success: var(--lw-on-success);
 
   --color-success: var(--lw-success);
   --color-warning: var(--lw-warning);

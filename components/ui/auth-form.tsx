@@ -1,7 +1,10 @@
 "use client";
 
-import { useActionState } from "react";
+import { createContext, useActionState, useContext } from "react";
 import type { AuthState } from "@/app/(auth)/actions";
+
+/** Values echoed back by a failed action so fields survive the submit reset. */
+const FormValuesContext = createContext<Record<string, string>>({});
 
 /** Minimal shared form shell for the auth pages — persistent labels, inline errors, loading state. */
 export function AuthForm({
@@ -31,7 +34,9 @@ export function AuthForm({
         <p className="mt-1 text-sm text-ink-secondary">{subtitle}</p>
       ) : null}
 
-      <div className="mt-6 flex flex-col gap-4">{children}</div>
+      <FormValuesContext.Provider value={state.values ?? {}}>
+        <div className="mt-6 flex flex-col gap-4">{children}</div>
+      </FormValuesContext.Provider>
 
       {state.error ? (
         <p role="alert" className="mt-4 text-sm font-medium text-danger">
@@ -47,7 +52,7 @@ export function AuthForm({
       <button
         type="submit"
         disabled={pending}
-        className="mt-6 flex min-h-11 w-full items-center justify-center rounded-full bg-teal-500 px-5 text-sm font-semibold text-white shadow-rest-xs transition hover:bg-teal-600 hover:shadow-lift active:scale-[0.97] disabled:opacity-45 disabled:shadow-none"
+        className="mt-6 flex min-h-11 w-full items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary shadow-rest-xs transition hover:bg-primary-hover hover:shadow-lift active:scale-[0.97] disabled:opacity-45 disabled:shadow-none"
       >
         {pending ? "One moment…" : submitLabel}
       </button>
@@ -74,6 +79,7 @@ export function Field({
   autoComplete?: string;
   placeholder?: string;
 }) {
+  const values = useContext(FormValuesContext);
   return (
     <div className="flex flex-col gap-2">
       <label htmlFor={`f-${name}`} className="text-sm font-medium text-ink-secondary">
@@ -85,6 +91,7 @@ export function Field({
         type={type}
         autoComplete={autoComplete}
         placeholder={placeholder}
+        defaultValue={values[name] ?? ""}
         required
         className="min-h-11 rounded-field border-[1.5px] border-hairline-strong bg-elevated px-3 text-base text-ink placeholder:text-ink-muted transition focus:border-teal-500 focus:shadow-focus-ring focus:outline-none"
       />

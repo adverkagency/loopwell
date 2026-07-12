@@ -14,23 +14,34 @@ export function WeekBars({
   const label = days
     .map((d) => `${d.date.slice(5)}: ${Math.round(d.ratio * 100)}%`)
     .join(", ");
+  const empty = days.every((d) => d.ratio <= 0);
   return (
-    <div
-      role="img"
-      aria-label={`Daily habit completion, last ${days.length} days: ${label}`}
-      className="flex h-36 items-end gap-2"
-    >
-      {days.map((d) => (
-        <div key={d.date} className="flex flex-1 flex-col items-center gap-1">
-          <div
-            className="w-full rounded-t-md bg-gradient-to-b from-teal-400 to-teal-600"
-            style={{ height: `${Math.max(3, d.ratio * 100)}%` }}
-          />
-          <span className="text-[10px] text-ink-muted">
-            {weekdayLetter(d.date)}
-          </span>
-        </div>
-      ))}
+    <div>
+      <div
+        role="img"
+        aria-label={`Daily habit completion, last ${days.length} days: ${label}`}
+        className="flex h-36 items-end gap-2"
+      >
+        {days.map((d) => (
+          <div key={d.date} className="flex h-full flex-1 flex-col items-center gap-1">
+            {/* Full-height sunken track so a 0% day still reads as "a day", not a blank */}
+            <div className="relative w-full flex-1 overflow-hidden rounded-md bg-sunken">
+              <div
+                className="absolute inset-x-0 bottom-0 rounded-t-md bg-gradient-to-b from-teal-400 to-teal-600"
+                style={{ height: `${Math.min(100, Math.max(d.ratio > 0 ? 4 : 0, d.ratio * 100))}%` }}
+              />
+            </div>
+            <span className="text-[10px] text-ink-muted">
+              {weekdayLetter(d.date)}
+            </span>
+          </div>
+        ))}
+      </div>
+      {empty ? (
+        <p className="mt-3 text-sm text-ink-secondary">
+          No habits completed this week yet — today&apos;s a fine place to start.
+        </p>
+      ) : null}
     </div>
   );
 }

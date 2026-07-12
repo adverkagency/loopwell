@@ -2,6 +2,7 @@
 
 import { useOptimistic, useTransition, useState } from "react";
 import { setHabitState } from "./actions";
+import { useHydrated } from "@/lib/use-hydrated";
 import { currentStreak, type HabitState } from "./streak";
 import {
   CheckIcon,
@@ -35,6 +36,7 @@ export function HabitList({
   habits: DailyHabit[];
   today: string;
 }) {
+  const hydrated = useHydrated();
   const [, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [optimistic, applyOptimistic] = useOptimistic<
@@ -85,8 +87,9 @@ export function HabitList({
                   key={h.id}
                   type="button"
                   aria-pressed={pressed}
+                  disabled={!hydrated}
                   onClick={() => toggle(h, "complete")}
-                  className={`flex min-h-11 min-w-[84px] flex-none flex-col items-center gap-2 rounded-control border-[1.5px] px-4 py-3 text-xs font-medium transition active:scale-[0.96] ${
+                  className={`flex min-h-11 min-w-[84px] flex-none flex-col items-center gap-2 rounded-control border-[1.5px] px-4 py-3 text-xs font-medium transition active:scale-[0.96] disabled:cursor-wait disabled:opacity-60 ${
                     pressed
                       ? "border-teal-400 bg-teal-50 text-teal-700"
                       : "border-hairline bg-elevated text-ink-secondary hover:border-teal-400"
@@ -151,7 +154,8 @@ export function HabitList({
                   <StateButton
                     label="Mark complete"
                     active={state === "complete"}
-                    activeCls="bg-success border-success text-white"
+                    activeCls="bg-success border-success text-on-success"
+                    disabled={!hydrated}
                     onClick={() => toggle(h, "complete")}
                   >
                     <CheckIcon size={16} />
@@ -160,6 +164,7 @@ export function HabitList({
                     label="Mark partial"
                     active={state === "partial"}
                     activeCls="bg-partial border-partial text-[#3a2c05]"
+                    disabled={!hydrated}
                     onClick={() => toggle(h, "partial")}
                   >
                     <HalfIcon size={16} />
@@ -168,6 +173,7 @@ export function HabitList({
                     label="Mark skipped"
                     active={state === "skip"}
                     activeCls="bg-skip border-skip text-[#3b382e]"
+                    disabled={!hydrated}
                     onClick={() => toggle(h, "skip")}
                   >
                     <XIcon size={16} />
@@ -186,12 +192,14 @@ function StateButton({
   label,
   active,
   activeCls,
+  disabled,
   onClick,
   children,
 }: {
   label: string;
   active: boolean;
   activeCls: string;
+  disabled?: boolean;
   onClick: () => void;
   children: React.ReactNode;
 }) {
@@ -199,9 +207,11 @@ function StateButton({
     <button
       type="button"
       aria-label={label}
+      title={label}
       aria-pressed={active}
+      disabled={disabled}
       onClick={onClick}
-      className={`flex h-10 w-10 items-center justify-center rounded-full border-[1.5px] transition active:scale-90 ${
+      className={`flex h-10 w-10 items-center justify-center rounded-full border-[1.5px] transition active:scale-90 disabled:cursor-wait disabled:opacity-60 ${
         active
           ? activeCls
           : "border-hairline-strong bg-elevated text-ink-muted hover:border-ink-muted hover:text-ink-secondary"

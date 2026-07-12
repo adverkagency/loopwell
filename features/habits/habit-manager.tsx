@@ -280,7 +280,7 @@ function HabitForm({
         <button
           type="submit"
           disabled={pending}
-          className="flex min-h-11 items-center rounded-full bg-teal-500 px-5 text-sm font-semibold text-white shadow-rest-xs transition hover:bg-teal-600 disabled:opacity-45"
+          className="flex min-h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary shadow-rest-xs transition hover:bg-primary-hover disabled:opacity-45"
         >
           {pending ? "Saving…" : habit ? "Save changes" : "Add habit"}
         </button>

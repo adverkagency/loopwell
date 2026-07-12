@@ -2,6 +2,7 @@
 
 import { useOptimistic, useRef, useState, useTransition } from "react";
 import { addWater, setMood, setSleep, setWeight } from "./actions";
+import { useHydrated } from "@/lib/use-hydrated";
 import {
   bmi,
   bmiCategory,
@@ -22,6 +23,7 @@ export function WaterCard({
   totalMl: number;
   goalMl: number;
 }) {
+  const hydrated = useHydrated();
   const [, startTransition] = useTransition();
   const [optimisticTotal, addOptimistic] = useOptimistic(
     totalMl,
@@ -66,8 +68,9 @@ export function WaterCard({
             <button
               key={amt}
               type="button"
+              disabled={!hydrated}
               onClick={() => log(amt)}
-              className="flex min-h-9 items-center rounded-full border border-hairline-strong px-4 text-xs font-semibold text-ink transition hover:bg-surface-hover active:scale-[0.96]"
+              className="flex min-h-9 items-center rounded-full border border-hairline-strong px-4 text-xs font-semibold text-ink transition hover:bg-surface-hover active:scale-[0.96] disabled:cursor-wait disabled:opacity-60"
             >
               +{amt === 1000 ? "1L" : `${amt}ml`}
             </button>

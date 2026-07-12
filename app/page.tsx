@@ -24,7 +24,7 @@ export default function LandingPage() {
       <div className="mt-8 flex flex-wrap justify-center gap-3">
         <Link
           href="/register"
-          className="flex min-h-11 items-center justify-center rounded-full bg-teal-500 px-6 text-sm font-semibold text-white shadow-rest-xs transition hover:bg-teal-600 hover:shadow-lift"
+          className="flex min-h-11 items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-on-primary shadow-rest-xs transition hover:bg-primary-hover hover:shadow-lift"
         >
           Get started — it&apos;s free
         </Link>

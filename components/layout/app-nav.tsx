@@ -37,7 +37,7 @@ export function AppNav() {
             aria-current={active ? "page" : undefined}
             className={`relative flex min-h-11 min-w-14 flex-col items-center justify-center gap-0.5 rounded-control px-3 py-1 text-xs transition md:flex-row md:justify-start md:gap-3 md:px-4 md:py-3 md:text-sm ${
               active
-                ? "font-semibold text-teal-600 md:bg-teal-50 md:text-teal-700 md:before:absolute md:before:bottom-[20%] md:before:left-0 md:before:top-[20%] md:before:w-[3px] md:before:rounded-full md:before:bg-teal-500"
+                ? "font-semibold text-teal-600 md:bg-teal-50 md:text-teal-700 md:before:absolute md:before:bottom-[20%] md:before:left-0 md:before:top-[20%] md:before:w-[3px] md:before:rounded-full md:before:bg-primary"
                 : "text-ink-muted hover:text-teal-500 md:hover:bg-surface-hover"
             }`}
           >

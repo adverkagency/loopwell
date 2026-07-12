@@ -53,7 +53,7 @@ export function OnboardingWizard() {
           <span
             key={n}
             className={`h-1 flex-1 rounded-full transition ${
-              n <= step ? "bg-teal-500" : "bg-hairline"
+              n <= step ? "bg-primary" : "bg-hairline"
             }`}
           />
         ))}
@@ -88,7 +88,7 @@ export function OnboardingWizard() {
                   }`}
                 >
                   {selected ? (
-                    <span className="absolute right-2 top-2 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-teal-500 text-white">
+                    <span className="absolute right-2 top-2 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-primary text-on-primary">
                       <CheckIcon size={11} />
                     </span>
                   ) : null}
@@ -112,7 +112,7 @@ export function OnboardingWizard() {
               type="button"
               disabled={picked.length < 3}
               onClick={() => setStep(2)}
-              className="flex min-h-11 items-center rounded-full bg-teal-500 px-6 text-sm font-semibold text-white shadow-rest-xs transition hover:bg-teal-600 disabled:opacity-45"
+              className="flex min-h-11 items-center rounded-full bg-primary px-6 text-sm font-semibold text-on-primary shadow-rest-xs transition hover:bg-primary-hover disabled:opacity-45"
             >
               Continue
             </button>
@@ -145,7 +145,7 @@ export function OnboardingWizard() {
             <button
               type="button"
               onClick={() => setStep(3)}
-              className="flex min-h-11 items-center rounded-full bg-teal-500 px-6 text-sm font-semibold text-white shadow-rest-xs transition hover:bg-teal-600"
+              className="flex min-h-11 items-center rounded-full bg-primary px-6 text-sm font-semibold text-on-primary shadow-rest-xs transition hover:bg-primary-hover"
             >
               Skip for now
             </button>
@@ -167,12 +167,12 @@ export function OnboardingWizard() {
               already done.
             </p>
             <div className="mt-6 flex items-center gap-3 rounded-card border border-hairline bg-elevated px-4 py-3 text-left shadow-rest">
-              <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-teal-500" />
+              <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-primary" />
               <div className="flex-1">
                 <div className="text-sm font-semibold text-ink">{picked[0]}</div>
                 <div className="text-xs text-ink-muted">Your first habit</div>
               </div>
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-success text-white">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-success text-on-success">
                 <CheckIcon size={16} />
               </span>
             </div>
@@ -187,7 +187,7 @@ export function OnboardingWizard() {
               type="button"
               disabled={pending}
               onClick={finish}
-              className="flex min-h-11 w-full items-center justify-center rounded-full bg-teal-500 px-6 text-sm font-semibold text-white shadow-rest-xs transition hover:bg-teal-600 disabled:opacity-45"
+              className="flex min-h-11 w-full items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-on-primary shadow-rest-xs transition hover:bg-primary-hover disabled:opacity-45"
             >
               {pending ? "Setting things up…" : "Go to your Daily page"}
             </button>

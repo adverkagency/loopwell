@@ -235,7 +235,7 @@ export default async function DailyPage() {
             </p>
             <Link
               href="/app/settings/habits"
-              className="flex min-h-11 items-center rounded-full bg-teal-500 px-5 text-sm font-semibold text-white shadow-rest-xs transition hover:bg-teal-600"
+              className="flex min-h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary shadow-rest-xs transition hover:bg-primary-hover"
             >
               Add your first habit
             </Link>

@@ -18,7 +18,7 @@ export default function VerifyEmailPage() {
       </p>
       <Link
         href="/app/daily"
-        className="mt-6 flex min-h-11 w-full items-center justify-center rounded-full bg-teal-500 px-5 text-sm font-semibold text-white shadow-rest-xs transition hover:bg-teal-600"
+        className="mt-6 flex min-h-11 w-full items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary shadow-rest-xs transition hover:bg-primary-hover"
       >
         Go to your Daily page
       </Link>

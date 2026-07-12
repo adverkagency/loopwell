@@ -21,7 +21,7 @@ export default async function SettingsPage() {
     <>
       <h1 className="text-3xl font-bold tracking-tight text-ink">Settings</h1>
       <p className="mt-1 text-sm text-ink-secondary">
-        Profile, preferences, appearance, notifications, habits, data, account.
+        Habits, weight tracking, notifications, and your data. More sections coming soon.
       </p>
       <div className="mt-6 flex flex-col gap-2">
         <Link
@@ -44,7 +44,7 @@ export default async function SettingsPage() {
           <a
             href="/api/export/csv"
             download
-            className="mt-3 inline-flex min-h-10 items-center rounded-full bg-teal-500 px-5 text-sm font-semibold text-white shadow-rest-xs transition hover:bg-teal-600"
+            className="mt-3 inline-flex min-h-10 items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary shadow-rest-xs transition hover:bg-primary-hover"
           >
             Download CSV export
           </a>

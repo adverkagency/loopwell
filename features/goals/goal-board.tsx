@@ -58,7 +58,7 @@ export function GoalBoard({ goals }: { goals: Goal[] }) {
             type="button"
             autoFocus
             onClick={() => setCelebrating(null)}
-            className="mt-8 flex min-h-11 items-center rounded-full bg-teal-500 px-6 text-sm font-semibold text-white shadow-rest transition hover:bg-teal-600"
+            className="mt-8 flex min-h-11 items-center rounded-full bg-primary px-6 text-sm font-semibold text-on-primary shadow-rest transition hover:bg-primary-hover"
           >
             Keep going
           </button>
@@ -97,7 +97,7 @@ export function GoalBoard({ goals }: { goals: Goal[] }) {
           <button
             type="button"
             onClick={() => setAdding(true)}
-            className="flex min-h-11 items-center rounded-full bg-teal-500 px-5 text-sm font-semibold text-white shadow-rest-xs transition hover:bg-teal-600"
+            className="flex min-h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary shadow-rest-xs transition hover:bg-primary-hover"
           >
             Set your first goal
           </button>
@@ -142,7 +142,7 @@ export function GoalBoard({ goals }: { goals: Goal[] }) {
                 <button
                   type="button"
                   onClick={() => complete(g)}
-                  className="flex min-h-9 items-center gap-1.5 rounded-full bg-success px-4 text-xs font-semibold text-white transition hover:opacity-90"
+                  className="flex min-h-9 items-center gap-1.5 rounded-full bg-success px-4 text-xs font-semibold text-on-success transition hover:opacity-90"
                 >
                   <CheckIcon size={13} /> Mark complete
                 </button>
@@ -190,7 +190,7 @@ export function GoalBoard({ goals }: { goals: Goal[] }) {
                 key={g.id}
                 className="flex items-center gap-3 rounded-control border border-hairline bg-elevated px-4 py-3 opacity-75"
               >
-                <span className="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-success text-white">
+                <span className="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-success text-on-success">
                   <CheckIcon size={12} />
                 </span>
                 <span className="flex-1 text-sm font-medium text-ink-secondary">{g.label}</span>
@@ -297,7 +297,7 @@ function GoalForm({
         <p role="alert" className="text-sm font-medium text-danger">{state.error}</p>
       ) : null}
       <div className="flex gap-2">
-        <button type="submit" disabled={pending} className="flex min-h-11 items-center rounded-full bg-teal-500 px-5 text-sm font-semibold text-white shadow-rest-xs transition hover:bg-teal-600 disabled:opacity-45">
+        <button type="submit" disabled={pending} className="flex min-h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary shadow-rest-xs transition hover:bg-primary-hover disabled:opacity-45">
           {pending ? "Saving…" : goal ? "Save changes" : "Save goal"}
         </button>
         <button type="button" onClick={onDone} className="flex min-h-11 items-center rounded-full border border-hairline-strong px-5 text-sm font-semibold text-ink transition hover:bg-surface-hover">
