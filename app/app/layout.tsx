@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AppNav } from "@/components/layout/app-nav";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { logout } from "@/app/(auth)/actions";
 
 /** Authenticated app shell — proxy already gates, this is defense in depth + user context. */
@@ -41,14 +42,17 @@ export default async function AppLayout({
           <span className="hidden text-sm text-ink-secondary md:inline">
             {user.email}
           </span>
-          <form action={logout}>
-            <button
-              type="submit"
-              className="flex min-h-9 items-center rounded-full border border-hairline-strong px-4 text-xs font-semibold text-ink transition hover:bg-surface-hover"
-            >
-              Log out
-            </button>
-          </form>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <form action={logout}>
+              <button
+                type="submit"
+                className="flex min-h-9 items-center rounded-full border border-hairline-strong px-4 text-xs font-semibold text-ink transition hover:bg-surface-hover"
+              >
+                Log out
+              </button>
+            </form>
+          </div>
         </header>
         <main className="mx-auto w-full max-w-[940px] px-4 pb-[100px] pt-4 sm:px-6 sm:pt-6 md:pb-8 lg:px-8 lg:pt-8">
           {children}

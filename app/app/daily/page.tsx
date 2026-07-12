@@ -15,7 +15,11 @@ import {
   type NutritionEntry,
   type WorkoutEntry,
 } from "@/features/modules/module-cards";
+import { LifeScoreCard } from "@/features/life-score/score-card";
+import { lifeScore } from "@/features/life-score/score";
+import { detectUnlocks } from "@/features/achievements/detect";
 import type { HabitLogRow, HabitRow } from "@/lib/api-types/db";
+import type { HabitState } from "@/features/habits/streak";
 
 export const metadata = { title: "Daily — Loopwell" };
 
@@ -66,9 +70,9 @@ export default async function DailyPage() {
       .returns<Pick<HabitRow, "id" | "name" | "icon" | "color" | "in_quick_log">[]>(),
     supabase
       .from("habit_logs")
-      .select("habit_id, date, state")
+      .select("habit_id, date, state, created_at")
       .eq("user_id", user!.id)
-      .returns<Pick<HabitLogRow, "habit_id" | "date" | "state">[]>(),
+      .returns<Pick<HabitLogRow, "habit_id" | "date" | "state" | "created_at">[]>(),
     supabase
       .from("water_logs")
       .select("amount_ml")
@@ -76,7 +80,7 @@ export default async function DailyPage() {
       .eq("date", today),
     supabase
       .from("sleep_logs")
-      .select("bed_time, wake_time, quality")
+      .select("bed_time, wake_time, quality, duration_minutes")
       .eq("user_id", user!.id)
       .eq("date", today)
       .maybeSingle(),
@@ -147,6 +151,64 @@ export default async function DailyPage() {
     };
   });
 
+  // ---- Life Score (Beta) ----
+  const todayStates = daily.map((h) => h.todayState);
+  const { score, components } = lifeScore({
+    habitCount: daily.length,
+    habitsComplete: todayStates.filter((s) => s === "complete").length,
+    habitsPartial: todayStates.filter((s) => s === "partial").length,
+    sleepMinutes: sleepRow?.duration_minutes ?? null,
+    waterMl: waterTotal,
+    waterGoalMl: profile?.water_goal_ml ?? 2000,
+    nutritionLogged: (nutritionRows ?? []).length > 0,
+    workoutLogged: (workoutRows ?? []).length > 0,
+    mood: (moodRow?.mood as number | undefined) ?? null,
+  });
+
+  // ---- Achievement unlock detection (permanent inserts, fire-and-check) ----
+  const [{ data: waterAll }, { count: workoutCount }, { count: goalsDone }, { data: alreadyUnlocked }] =
+    await Promise.all([
+      supabase.from("water_logs").select("amount_ml").eq("user_id", user!.id),
+      supabase
+        .from("workout_logs")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user!.id),
+      supabase
+        .from("goals")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user!.id)
+        .not("completed_at", "is", null),
+      supabase
+        .from("user_achievements")
+        .select("achievement_id")
+        .eq("user_id", user!.id),
+    ]);
+
+  const earned = detectUnlocks({
+    today,
+    timezone: tz,
+    habitLogs: (logs ?? []).map((l) => ({
+      habit_id: l.habit_id,
+      date: l.date,
+      state: l.state as HabitState,
+      created_at: l.created_at,
+    })),
+    habitCount: daily.length,
+    totalWaterMl: (waterAll ?? []).reduce((s, r) => s + (r.amount_ml as number), 0),
+    workoutCount: workoutCount ?? 0,
+    completedGoals: goalsDone ?? 0,
+  });
+  const unlockedIds = new Set((alreadyUnlocked ?? []).map((u) => u.achievement_id));
+  const fresh = earned.filter((id) => !unlockedIds.has(id));
+  if (fresh.length > 0) {
+    await supabase
+      .from("user_achievements")
+      .upsert(
+        fresh.map((achievement_id) => ({ user_id: user!.id, achievement_id })),
+        { onConflict: "user_id,achievement_id", ignoreDuplicates: true }
+      );
+  }
+
   const dateLabel = new Intl.DateTimeFormat("en-US", {
     timeZone: tz,
     weekday: "long",
@@ -165,6 +227,7 @@ export default async function DailyPage() {
       </p>
 
       <div className="mt-6 flex flex-col gap-6">
+        <LifeScoreCard score={score} components={components} />
         {daily.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-card border border-hairline bg-elevated p-8 text-center shadow-rest">
             <p className="text-sm text-ink-secondary">

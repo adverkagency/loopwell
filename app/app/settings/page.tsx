@@ -34,6 +34,29 @@ export default async function SettingsPage() {
           </span>
         </Link>
         <WeightToggle enabled={profile?.weight_module_enabled !== false} />
+
+        <div className="rounded-card border border-hairline bg-elevated px-5 py-4 shadow-rest">
+          <h2 className="text-sm font-semibold text-ink">Your data</h2>
+          <p className="mt-1 text-xs text-ink-muted">
+            Everything you&apos;ve logged, in one CSV — yours to keep. This is
+            also your data-export right under GDPR/CCPA.
+          </p>
+          <a
+            href="/api/export/csv"
+            download
+            className="mt-3 inline-flex min-h-10 items-center rounded-full bg-teal-500 px-5 text-sm font-semibold text-white shadow-rest-xs transition hover:bg-teal-600"
+          >
+            Download CSV export
+          </a>
+        </div>
+
+        <div className="rounded-card border border-hairline bg-elevated px-5 py-4 shadow-rest opacity-80">
+          <h2 className="text-sm font-semibold text-ink">Notifications</h2>
+          <p className="mt-1 text-xs text-ink-muted">
+            Push and email reminders arrive once the Firebase (FCM) and Resend
+            accounts are connected — reminder preferences will live here.
+          </p>
+        </div>
       </div>
     </>
   );
