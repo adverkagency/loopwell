@@ -8,6 +8,13 @@ import {
   WaterCard,
   WeightCard,
 } from "@/features/health/health-cards";
+import {
+  JournalCard,
+  NutritionCard,
+  WorkoutCard,
+  type NutritionEntry,
+  type WorkoutEntry,
+} from "@/features/modules/module-cards";
 import type { HabitLogRow, HabitRow } from "@/lib/api-types/db";
 
 export const metadata = { title: "Daily — Loopwell" };
@@ -86,6 +93,30 @@ export default async function DailyPage() {
       .eq("date", today)
       .maybeSingle(),
   ]);
+
+  const [{ data: nutritionRows }, { data: workoutRows }, { data: journalRow }] =
+    await Promise.all([
+      supabase
+        .from("nutrition_logs")
+        .select("id, food_name, calories, protein_g, carbs_g, fat_g, fiber_g, sugar_g")
+        .eq("user_id", user!.id)
+        .eq("date", today)
+        .order("created_at", { ascending: true })
+        .returns<NutritionEntry[]>(),
+      supabase
+        .from("workout_logs")
+        .select("id, kind, name, sets, reps, weight_kg, distance_km, duration_minutes")
+        .eq("user_id", user!.id)
+        .eq("date", today)
+        .order("created_at", { ascending: true })
+        .returns<WorkoutEntry[]>(),
+      supabase
+        .from("journal_entries")
+        .select("body")
+        .eq("user_id", user!.id)
+        .eq("date", today)
+        .maybeSingle(),
+    ]);
 
   const waterTotal = (waterRows ?? []).reduce(
     (sum, r) => sum + (r.amount_ml as number),
@@ -177,6 +208,13 @@ export default async function DailyPage() {
             }
           />
         </div>
+
+        {/* Higher-friction modules — collapsed by default, Journal last */}
+        <div className="grid grid-cols-1 items-start gap-6 sm:grid-cols-2">
+          <NutritionCard today={today} entries={nutritionRows ?? []} />
+          <WorkoutCard today={today} entries={workoutRows ?? []} />
+        </div>
+        <JournalCard today={today} initialBody={(journalRow?.body as string) ?? ""} />
       </div>
     </>
   );
