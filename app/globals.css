@@ -1,0 +1,208 @@
+@import "tailwindcss";
+
+/* =========================================================
+   Loopwell design tokens — source of truth: /DESIGN.md
+   "The Quiet Notebook": warm paper, one teal voice,
+   scarce coral flame, tabular numbers, no pure black/white.
+   Light is default; dark flips via [data-theme="dark"] or
+   system preference (when no explicit override is set).
+   ========================================================= */
+
+:root {
+  /* Neutrals */
+  --lw-bg: #faf8f4;              /* Warm Paper */
+  --lw-bg-elevated: #ffffff;     /* Card White */
+  --lw-bg-sunken: #f1ede4;       /* Sunken Sand */
+  --lw-surface-hover: #f4f0e7;
+  --lw-border: #e7e0d3;          /* Hairline */
+  --lw-border-strong: #cfc6b4;
+  --lw-ink: #22261e;
+  --lw-ink-secondary: #565b4e;
+  --lw-ink-muted: #83877a;
+  --lw-ink-inverse: #fbfaf6;
+
+  /* Primary — Loopwell Teal */
+  --lw-teal-50: #eef8f6;
+  --lw-teal-100: #d3ede8;
+  --lw-teal-200: #a7dbd2;
+  --lw-teal-300: #74c3b6;
+  --lw-teal-400: #45a897;
+  --lw-teal-500: #2f8f7e;
+  --lw-teal-600: #257566;
+  --lw-teal-700: #1d5c51;
+  --lw-teal-800: #16453d;
+  --lw-teal-900: #0f2e29;
+
+  /* Accent — Streak Coral (One Flame Rule) */
+  --lw-coral-300: #ffd0a3;
+  --lw-coral-400: #ffb266;
+  --lw-coral-500: #f5964a;
+  --lw-coral-600: #db7d33;
+  --lw-coral-700: #b7621f;
+
+  /* Semantic + habit states (No-Guilt Palette Rule) */
+  --lw-success: #3f9e6d;
+  --lw-warning: #c98a1f;
+  --lw-danger: #d1594a;
+  --lw-info: #3d7fbf;
+  --lw-partial: #d99a1e;         /* Partial Gold — dark ink icons only */
+  --lw-skip: #b3ad9c;            /* Skip Stone — dark ink icons only */
+
+  /* Elevation (Reactive Lift Rule) — warm-tinted */
+  --lw-shadow-xs: 0 1px 2px rgba(30, 34, 26, 0.05);
+  --lw-shadow-sm: 0 1px 3px rgba(30, 34, 26, 0.06), 0 1px 2px rgba(30, 34, 26, 0.04);
+  --lw-shadow-md: 0 6px 16px -4px rgba(30, 34, 26, 0.1), 0 2px 6px -2px rgba(30, 34, 26, 0.06);
+  --lw-shadow-lg: 0 18px 44px -10px rgba(30, 34, 26, 0.18), 0 6px 14px -6px rgba(30, 34, 26, 0.09);
+  --lw-shadow-focus: 0 0 0 3px color-mix(in srgb, var(--lw-teal-500) 22%, transparent);
+
+  color-scheme: light;
+}
+
+/* Dark theme — Night surfaces; brightened teal/coral for contrast */
+[data-theme="dark"] {
+  --lw-bg: #14181a;
+  --lw-bg-elevated: #1c2124;
+  --lw-bg-sunken: #0f1214;
+  --lw-surface-hover: #232a2d;
+  --lw-border: #2b3134;
+  --lw-border-strong: #3a4246;
+  --lw-ink: #f2f0ea;
+  --lw-ink-secondary: #b7bcb4;
+  --lw-ink-muted: #7c8480;
+  --lw-ink-inverse: #1c2124;
+
+  --lw-teal-500: #4fb3a0;
+  --lw-teal-600: #3f9987;
+  --lw-coral-500: #ffab5c;
+  --lw-coral-700: #ffc487;
+
+  --lw-success: #59c085;
+  --lw-warning: #e0a83e;
+  --lw-danger: #e57a6b;
+  --lw-partial: #e8b339;
+
+  --lw-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --lw-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.34), 0 1px 2px rgba(0, 0, 0, 0.24);
+  --lw-shadow-md: 0 6px 18px -4px rgba(0, 0, 0, 0.46), 0 2px 6px -2px rgba(0, 0, 0, 0.32);
+  --lw-shadow-lg: 0 20px 48px -10px rgba(0, 0, 0, 0.6), 0 6px 14px -6px rgba(0, 0, 0, 0.4);
+  --lw-shadow-focus: 0 0 0 3px color-mix(in srgb, var(--lw-teal-500) 30%, transparent);
+
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --lw-bg: #14181a;
+    --lw-bg-elevated: #1c2124;
+    --lw-bg-sunken: #0f1214;
+    --lw-surface-hover: #232a2d;
+    --lw-border: #2b3134;
+    --lw-border-strong: #3a4246;
+    --lw-ink: #f2f0ea;
+    --lw-ink-secondary: #b7bcb4;
+    --lw-ink-muted: #7c8480;
+    --lw-ink-inverse: #1c2124;
+    --lw-teal-500: #4fb3a0;
+    --lw-teal-600: #3f9987;
+    --lw-coral-500: #ffab5c;
+    --lw-coral-700: #ffc487;
+    --lw-success: #59c085;
+    --lw-warning: #e0a83e;
+    --lw-danger: #e57a6b;
+    --lw-partial: #e8b339;
+    --lw-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --lw-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.34), 0 1px 2px rgba(0, 0, 0, 0.24);
+    --lw-shadow-md: 0 6px 18px -4px rgba(0, 0, 0, 0.46), 0 2px 6px -2px rgba(0, 0, 0, 0.32);
+    --lw-shadow-lg: 0 20px 48px -10px rgba(0, 0, 0, 0.6), 0 6px 14px -6px rgba(0, 0, 0, 0.4);
+    --lw-shadow-focus: 0 0 0 3px color-mix(in srgb, var(--lw-teal-500) 30%, transparent);
+    color-scheme: dark;
+  }
+}
+
+/* Tailwind theme — utilities generated from the tokens above.
+   e.g. bg-paper, text-ink, bg-teal-500, rounded-card, shadow-lift */
+@theme inline {
+  --color-paper: var(--lw-bg);
+  --color-elevated: var(--lw-bg-elevated);
+  --color-sunken: var(--lw-bg-sunken);
+  --color-surface-hover: var(--lw-surface-hover);
+  --color-hairline: var(--lw-border);
+  --color-hairline-strong: var(--lw-border-strong);
+  --color-ink: var(--lw-ink);
+  --color-ink-secondary: var(--lw-ink-secondary);
+  --color-ink-muted: var(--lw-ink-muted);
+  --color-ink-inverse: var(--lw-ink-inverse);
+
+  --color-teal-50: var(--lw-teal-50);
+  --color-teal-100: var(--lw-teal-100);
+  --color-teal-200: var(--lw-teal-200);
+  --color-teal-300: var(--lw-teal-300);
+  --color-teal-400: var(--lw-teal-400);
+  --color-teal-500: var(--lw-teal-500);
+  --color-teal-600: var(--lw-teal-600);
+  --color-teal-700: var(--lw-teal-700);
+  --color-teal-800: var(--lw-teal-800);
+  --color-teal-900: var(--lw-teal-900);
+
+  --color-coral-300: var(--lw-coral-300);
+  --color-coral-400: var(--lw-coral-400);
+  --color-coral-500: var(--lw-coral-500);
+  --color-coral-600: var(--lw-coral-600);
+  --color-coral-700: var(--lw-coral-700);
+
+  --color-success: var(--lw-success);
+  --color-warning: var(--lw-warning);
+  --color-danger: var(--lw-danger);
+  --color-info: var(--lw-info);
+  --color-partial: var(--lw-partial);
+  --color-skip: var(--lw-skip);
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+
+  --radius-field: 8px;    /* inputs, small buttons */
+  --radius-control: 14px; /* chips, habit rows */
+  --radius-card: 20px;    /* cards, modals */
+
+  --shadow-rest-xs: var(--lw-shadow-xs);
+  --shadow-rest: var(--lw-shadow-sm);
+  --shadow-lift: var(--lw-shadow-md);
+  --shadow-float: var(--lw-shadow-lg);
+  --shadow-focus-ring: var(--lw-shadow-focus);
+
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 900px;
+  --breakpoint-lg: 1024px;
+}
+
+/* Base */
+body {
+  background: var(--lw-bg);
+  color: var(--lw-ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3 { text-wrap: balance; }
+
+/* Steady Numbers Rule — every numeral renders tabular */
+.tabular, strong { font-variant-numeric: tabular-nums; }
+
+/* Focus visible — never color-only */
+:focus-visible {
+  outline: 2px solid var(--lw-teal-500);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
