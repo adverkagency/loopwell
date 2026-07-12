@@ -121,6 +121,10 @@ export function Heatmap({
           More
         </span>
       </div>
+      <p className="mt-2 text-xs text-ink-muted">
+        Each square is a day — deeper teal means more habits completed. Hover a
+        square for the exact date and percentage.
+      </p>
     </div>
   );
 }

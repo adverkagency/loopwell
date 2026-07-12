@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import type { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import {
   forgotPasswordSchema,
@@ -12,6 +13,8 @@ import {
 export type AuthState = {
   error?: string;
   message?: string;
+  /** Per-field validation messages keyed by input name, shown inline. */
+  fieldErrors?: Record<string, string>;
   /** Submitted values echoed back on failure so the form can repopulate
    *  after React's post-action reset. Never includes the password. */
   values?: Record<string, string>;
@@ -19,6 +22,15 @@ export type AuthState = {
 
 function keepEmail(formData: FormData): Record<string, string> {
   return { email: String(formData.get("email") ?? "") };
+}
+
+function fieldErrors(error: z.ZodError): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const issue of error.issues) {
+    const key = String(issue.path[0] ?? "");
+    if (key && !(key in out)) out[key] = issue.message;
+  }
+  return out;
 }
 
 function siteUrl() {
@@ -34,7 +46,7 @@ export async function register(
     password: formData.get("password"),
   });
   if (!parsed.success) {
-    return { error: parsed.error.issues[0].message, values: keepEmail(formData) };
+    return { fieldErrors: fieldErrors(parsed.error), values: keepEmail(formData) };
   }
 
   const supabase = await createClient();
@@ -67,7 +79,7 @@ export async function login(
     password: formData.get("password"),
   });
   if (!parsed.success) {
-    return { error: parsed.error.issues[0].message, values: keepEmail(formData) };
+    return { fieldErrors: fieldErrors(parsed.error), values: keepEmail(formData) };
   }
 
   const supabase = await createClient();
@@ -92,7 +104,7 @@ export async function forgotPassword(
 ): Promise<AuthState> {
   const parsed = forgotPasswordSchema.safeParse({ email: formData.get("email") });
   if (!parsed.success) {
-    return { error: parsed.error.issues[0].message, values: keepEmail(formData) };
+    return { fieldErrors: fieldErrors(parsed.error), values: keepEmail(formData) };
   }
 
   const supabase = await createClient();
@@ -113,7 +125,7 @@ export async function resetPassword(
     confirm: formData.get("confirm"),
   });
   if (!parsed.success) {
-    return { error: parsed.error.issues[0].message };
+    return { fieldErrors: fieldErrors(parsed.error) };
   }
 
   const supabase = await createClient();

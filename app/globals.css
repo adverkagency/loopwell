@@ -198,7 +198,11 @@
   --breakpoint-lg: 1024px;
 }
 
-/* Base */
+/* Base — html carries the bg too so fast-scroll overscroll never flashes
+   the UA default (audit: blank dark band above the sticky header) */
+html {
+  background: var(--lw-bg);
+}
 body {
   background: var(--lw-bg);
   color: var(--lw-ink);

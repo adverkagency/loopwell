@@ -6,6 +6,9 @@ import type { AuthState } from "@/app/(auth)/actions";
 /** Values echoed back by a failed action so fields survive the submit reset. */
 const FormValuesContext = createContext<Record<string, string>>({});
 
+/** Per-field validation messages from the last failed action. */
+const FieldErrorsContext = createContext<Record<string, string>>({});
+
 /** Minimal shared form shell for the auth pages — persistent labels, inline errors, loading state. */
 export function AuthForm({
   action,
@@ -35,7 +38,9 @@ export function AuthForm({
       ) : null}
 
       <FormValuesContext.Provider value={state.values ?? {}}>
-        <div className="mt-6 flex flex-col gap-4">{children}</div>
+        <FieldErrorsContext.Provider value={state.fieldErrors ?? {}}>
+          <div className="mt-6 flex flex-col gap-4">{children}</div>
+        </FieldErrorsContext.Provider>
       </FormValuesContext.Provider>
 
       {state.error ? (
@@ -80,6 +85,7 @@ export function Field({
   placeholder?: string;
 }) {
   const values = useContext(FormValuesContext);
+  const fieldError = useContext(FieldErrorsContext)[name];
   return (
     <div className="flex flex-col gap-2">
       <label htmlFor={`f-${name}`} className="text-sm font-medium text-ink-secondary">
@@ -93,8 +99,19 @@ export function Field({
         placeholder={placeholder}
         defaultValue={values[name] ?? ""}
         required
-        className="min-h-11 rounded-field border-[1.5px] border-hairline-strong bg-elevated px-3 text-base text-ink placeholder:text-ink-muted transition focus:border-teal-500 focus:shadow-focus-ring focus:outline-none"
+        aria-invalid={fieldError ? true : undefined}
+        aria-describedby={fieldError ? `f-${name}-error` : undefined}
+        className={`min-h-11 rounded-field border-[1.5px] bg-elevated px-3 text-base text-ink placeholder:text-ink-muted transition focus:shadow-focus-ring focus:outline-none ${
+          fieldError
+            ? "border-danger focus:border-danger"
+            : "border-hairline-strong focus:border-teal-500"
+        }`}
       />
+      {fieldError ? (
+        <p id={`f-${name}-error`} role="alert" className="text-sm font-medium text-danger">
+          {fieldError}
+        </p>
+      ) : null}
     </div>
   );
 }
