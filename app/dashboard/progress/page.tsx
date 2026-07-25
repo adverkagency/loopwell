@@ -126,7 +126,7 @@ export default async function ProgressPage() {
           title="Your trends start with day one"
           body="Trends need a little history. Log today's habits and check back in a few days — this page then fills with your weekly completion, consistency heatmap, and achievements."
           action={
-            <Link href="/app/daily" className={buttonClass("primary")}>
+            <Link href="/dashboard" className={buttonClass("primary")}>
               Log today
             </Link>
           }

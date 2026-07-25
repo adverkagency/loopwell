@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 
 /**
  * Handles Supabase email links (signup confirmation, password recovery).
- * Verifies the token then forwards: recovery → /reset-password, else → /app/daily.
+ * Verifies the token then forwards: recovery → /reset-password, else → /dashboard.
  */
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
           ? next
           : type === "recovery"
             ? "/reset-password"
-            : "/app/daily";
+            : "/dashboard";
       return NextResponse.redirect(new URL(dest, request.url));
     }
   }

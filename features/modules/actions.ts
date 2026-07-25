@@ -34,7 +34,7 @@ export async function addNutrition(
     .insert({ user_id: user.id, ...parsed.data });
   if (error) return { error: "Couldn't log that — try again." };
 
-  revalidatePath("/app/daily");
+  revalidatePath("/dashboard");
   return {};
 }
 
@@ -47,7 +47,7 @@ export async function deleteNutrition(id: string): Promise<ActionState> {
     .eq("user_id", user.id);
   if (error) return { error: "Couldn't remove — try again." };
 
-  revalidatePath("/app/daily");
+  revalidatePath("/dashboard");
   return {};
 }
 
@@ -65,7 +65,7 @@ export async function addWorkout(
     .insert({ user_id: user.id, ...parsed.data });
   if (error) return { error: "Couldn't log the workout — try again." };
 
-  revalidatePath("/app/daily");
+  revalidatePath("/dashboard");
   return {};
 }
 
@@ -78,7 +78,7 @@ export async function deleteWorkout(id: string): Promise<ActionState> {
     .eq("user_id", user.id);
   if (error) return { error: "Couldn't remove — try again." };
 
-  revalidatePath("/app/daily");
+  revalidatePath("/dashboard");
   return {};
 }
 
@@ -112,6 +112,6 @@ export async function saveJournal(input: {
     if (error) return { error: "Couldn't save the entry — try again." };
   }
 
-  revalidatePath("/app/daily");
+  revalidatePath("/dashboard");
   return {};
 }

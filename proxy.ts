@@ -3,9 +3,11 @@ import { NextResponse, type NextRequest } from "next/server";
 
 /**
  * Auth gating (architecture doc §8), Next 16 `proxy` convention:
- * - unauthenticated users are redirected away from /app/* and /onboarding
+ * - unauthenticated users are redirected away from /dashboard/* and /onboarding
  * - authenticated-but-not-onboarded users are pushed into /onboarding
- * - authenticated users hitting / or /login|/register go straight to /app/daily
+ * - authenticated users hitting /login|/register go straight to /dashboard
+ * `/` is always the marketing site, signed in or not — the product lives under
+ * /dashboard and the public site under /, and neither hijacks the other.
  * Also refreshes the Supabase session cookie on every matched request.
  */
 export async function proxy(request: NextRequest) {
@@ -38,7 +40,7 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const { pathname } = request.nextUrl;
-  const isAppZone = pathname.startsWith("/app");
+  const isAppZone = pathname.startsWith("/dashboard");
   const isOnboarding = pathname.startsWith("/onboarding");
   const isAuthPage =
     pathname === "/login" ||
@@ -52,9 +54,9 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (user && (isAuthPage || pathname === "/")) {
+  if (user && isAuthPage) {
     const url = request.nextUrl.clone();
-    url.pathname = "/app/daily";
+    url.pathname = "/dashboard";
     url.search = "";
     return NextResponse.redirect(url);
   }

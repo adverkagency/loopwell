@@ -18,7 +18,7 @@ export default async function OnboardingPage() {
     .eq("id", user.id)
     .single();
 
-  if (profile?.onboarding_completed_at) redirect("/app/daily");
+  if (profile?.onboarding_completed_at) redirect("/dashboard");
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-[640px] flex-col px-4 py-8 sm:px-6">

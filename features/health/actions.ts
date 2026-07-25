@@ -35,7 +35,7 @@ export async function addWater(input: {
     .insert({ user_id: user.id, ...parsed.data });
   if (error) return { error: "Couldn't log water — try again." };
 
-  revalidatePath("/app/daily");
+  revalidatePath("/dashboard");
   return {};
 }
 
@@ -69,7 +69,7 @@ export async function setSleep(input: {
   );
   if (error) return { error: "Couldn't save sleep — try again." };
 
-  revalidatePath("/app/daily");
+  revalidatePath("/dashboard");
   return {};
 }
 
@@ -93,7 +93,7 @@ export async function setMood(input: {
   );
   if (error) return { error: "Couldn't save mood — try again." };
 
-  revalidatePath("/app/daily");
+  revalidatePath("/dashboard");
   return {};
 }
 
@@ -111,7 +111,7 @@ export async function setWeight(input: {
   );
   if (error) return { error: "Couldn't save weight — try again." };
 
-  revalidatePath("/app/daily");
+  revalidatePath("/dashboard");
   return {};
 }
 
@@ -126,7 +126,7 @@ export async function setWeightModuleEnabled(
     .eq("id", user.id);
   if (error) return { error: "Couldn't update — try again." };
 
-  revalidatePath("/app/daily");
-  revalidatePath("/app/settings");
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/settings");
   return {};
 }

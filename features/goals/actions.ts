@@ -44,7 +44,7 @@ export async function createGoal(
   });
   if (error) return { error: "Couldn't create the goal — try again." };
 
-  revalidatePath("/app/goals");
+  revalidatePath("/dashboard/goals");
   return {};
 }
 
@@ -65,7 +65,7 @@ export async function updateGoal(
     .eq("user_id", user.id);
   if (error) return { error: "Couldn't save changes — try again." };
 
-  revalidatePath("/app/goals");
+  revalidatePath("/dashboard/goals");
   return {};
 }
 
@@ -84,7 +84,7 @@ export async function updateGoalProgress(input: {
     .eq("user_id", user.id);
   if (error) return { error: "Couldn't save — try again." };
 
-  revalidatePath("/app/goals");
+  revalidatePath("/dashboard/goals");
   return {};
 }
 
@@ -100,7 +100,7 @@ export async function setGoalCompleted(
     .eq("user_id", user.id);
   if (error) return { error: "Couldn't update — try again." };
 
-  revalidatePath("/app/goals");
+  revalidatePath("/dashboard/goals");
   return {};
 }
 
@@ -113,6 +113,6 @@ export async function deleteGoal(goalId: string): Promise<ActionState> {
     .eq("user_id", user.id);
   if (error) return { error: "Couldn't delete — try again." };
 
-  revalidatePath("/app/goals");
+  revalidatePath("/dashboard/goals");
   return {};
 }

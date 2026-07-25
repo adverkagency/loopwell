@@ -240,7 +240,7 @@ export function InsightCard({ text }: { text: string }) {
       </p>
       <p className="mt-4 text-pretty text-[17px] font-medium leading-snug">{text}</p>
       <Link
-        href="/app/progress"
+        href="/dashboard/progress"
         className="group mt-6 flex w-full items-center justify-between gap-3 border-t border-accent-foreground/20 pt-5 text-left text-[14px] font-medium"
       >
         See the full picture
@@ -272,7 +272,7 @@ export function ActiveGoals({
       {goals.length === 0 ? (
         <p className="mt-5 text-[13px] text-muted-foreground">
           No active goals —{" "}
-          <Link href="/app/goals" className="font-medium text-accent hover:opacity-70">
+          <Link href="/dashboard/goals" className="font-medium text-accent hover:opacity-70">
             set one
           </Link>
           .

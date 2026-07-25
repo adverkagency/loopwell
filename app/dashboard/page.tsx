@@ -359,7 +359,7 @@ export default async function DailyPage() {
               title="Start with one habit"
               body="Habits are the loop everything else hangs off — tick one a day and Loopwell starts showing your streaks, weekly completion, and Life Score. Two minutes now, and tomorrow already has a shape."
               action={
-                <Link href="/app/settings/habits" className={buttonClass("primary")}>
+                <Link href="/dashboard/settings/habits" className={buttonClass("primary")}>
                   Create your first habit
                 </Link>
               }

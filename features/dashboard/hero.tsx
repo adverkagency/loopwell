@@ -50,7 +50,7 @@ export function HeroCard({
               Log today
             </Link>
             <Link
-              href="/app/progress"
+              href="/dashboard/progress"
               className="inline-flex h-11 items-center rounded-full bg-accent-soft px-5 text-[14px] font-medium text-accent transition-colors duration-200 hover:bg-accent-line/50 active:scale-[0.97]"
             >
               View progress

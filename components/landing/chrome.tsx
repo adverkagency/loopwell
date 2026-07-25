@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import { ArrowRight, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const NAV = [
   { href: "/features", label: "Features" },
@@ -29,9 +30,29 @@ export function Wordmark({ className = "" }: { className?: string }) {
   );
 }
 
+/**
+ * Signed-in state, resolved in the browser so the marketing pages stay static.
+ * `null` while unknown — the CTA renders its signed-out form until it resolves.
+ */
+function useSignedIn() {
+  const [signedIn, setSignedIn] = useState<boolean | null>(null);
+  useEffect(() => {
+    let active = true;
+    createClient()
+      .auth.getSession()
+      .then(({ data }) => active && setSignedIn(Boolean(data.session)))
+      .catch(() => active && setSignedIn(false));
+    return () => {
+      active = false;
+    };
+  }, []);
+  return signedIn;
+}
+
 export function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const signedIn = useSignedIn();
 
   return (
     <header className="sticky top-0 z-40 border-b border-lp-hairline/70 bg-lp-bg/80 backdrop-blur-xl">
@@ -55,14 +76,16 @@ export function SiteHeader() {
           })}
         </nav>
         <div className="flex items-center gap-2">
-          <Link href="/login" className="hidden text-sm text-lp-muted transition-colors hover:text-lp-ink md:inline">
-            Sign in
-          </Link>
+          {signedIn ? null : (
+            <Link href="/login" className="hidden text-sm text-lp-muted transition-colors hover:text-lp-ink md:inline">
+              Sign in
+            </Link>
+          )}
           <Link
-            href="/register"
+            href={signedIn ? "/dashboard" : "/register"}
             className="group inline-flex min-h-11 items-center gap-1.5 rounded-full bg-lp-ink px-4 py-2 text-sm font-medium text-lp-bg transition-all hover:bg-lp-ink/90 active:scale-[0.97]"
           >
-            Start free
+            {signedIn ? "Go to dashboard" : "Start free"}
             <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
           </Link>
           <button
@@ -78,7 +101,7 @@ export function SiteHeader() {
       {open && (
         <nav className="border-t border-lp-hairline bg-lp-bg px-6 py-4 md:hidden" aria-label="Mobile">
           <ul className="space-y-1">
-            {[...NAV, { href: "/login", label: "Sign in" }].map((item) => (
+            {[...NAV, signedIn ? { href: "/dashboard", label: "Go to dashboard" } : { href: "/login", label: "Sign in" }].map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}

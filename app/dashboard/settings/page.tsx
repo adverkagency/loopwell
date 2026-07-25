@@ -29,7 +29,7 @@ export default async function SettingsPage() {
 
       <div className="flex flex-col gap-2.5">
         <Link
-          href="/app/settings/habits"
+          href="/dashboard/settings/habits"
           className={`${CARD_BASE} lift group flex items-center gap-4 px-5 py-4`}
         >
           <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-accent-soft text-accent">

@@ -52,7 +52,7 @@ export async function setHabitState(input: {
     if (error) return { error: "Couldn't save that — try again." };
   }
 
-  revalidatePath("/app/daily");
+  revalidatePath("/dashboard");
   return {};
 }
 
@@ -82,8 +82,8 @@ export async function createHabit(
   });
   if (error) return { error: "Couldn't create the habit — try again." };
 
-  revalidatePath("/app/daily");
-  revalidatePath("/app/settings/habits");
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/settings/habits");
   return {};
 }
 
@@ -108,8 +108,8 @@ export async function updateHabit(
     .eq("user_id", user.id);
   if (error) return { error: "Couldn't save changes — try again." };
 
-  revalidatePath("/app/daily");
-  revalidatePath("/app/settings/habits");
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/settings/habits");
   return {};
 }
 
@@ -125,8 +125,8 @@ export async function setHabitArchived(
     .eq("user_id", user.id);
   if (error) return { error: "Couldn't update — try again." };
 
-  revalidatePath("/app/daily");
-  revalidatePath("/app/settings/habits");
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/settings/habits");
   return {};
 }
 
@@ -161,8 +161,8 @@ export async function moveHabit(
     .eq("id", b.id)
     .eq("user_id", user.id);
 
-  revalidatePath("/app/daily");
-  revalidatePath("/app/settings/habits");
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/settings/habits");
   return {};
 }
 
@@ -217,5 +217,5 @@ export async function completeOnboarding(input: {
     .update({ timezone: tz, onboarding_completed_at: new Date().toISOString() })
     .eq("id", user.id);
 
-  redirect("/app/daily");
+  redirect("/dashboard");
 }

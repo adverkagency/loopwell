@@ -23,11 +23,11 @@ import { logout } from "@/app/(auth)/actions";
 /** Locked IA: Daily, Progress, Goals, Settings. Habits management sits under
  *  Settings but earns a top-level entry here — it's the core loop's home. */
 const NAV: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/app/daily", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/app/settings/habits", label: "Habits", icon: SquareCheckBig },
-  { href: "/app/goals", label: "Goals", icon: Target },
-  { href: "/app/progress", label: "Progress", icon: TrendingUp },
-  { href: "/app/settings", label: "Settings", icon: Settings },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/dashboard/settings/habits", label: "Habits", icon: SquareCheckBig },
+  { href: "/dashboard/goals", label: "Goals", icon: Target },
+  { href: "/dashboard/progress", label: "Progress", icon: TrendingUp },
+  { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
 const FOCUS_LINE = "Consistency is the quietest form of self-respect.";
@@ -60,7 +60,7 @@ export function AppShell({
   }, [open]);
 
   function isActive(href: string) {
-    return href === "/app/settings"
+    return href === "/dashboard/settings"
       ? pathname === href
       : pathname.startsWith(href);
   }
@@ -179,14 +179,14 @@ export function AppShell({
             </div>
             <div className="flex shrink-0 items-center gap-1 sm:gap-2">
               <Link
-                href="/app/progress"
+                href="/dashboard/progress"
                 aria-label="Progress and achievements"
                 className="relative hidden size-11 place-items-center rounded-xl text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:grid"
               >
                 <ChartColumn aria-hidden className="size-[18px]" strokeWidth={1.75} />
               </Link>
               <Link
-                href="/app/settings"
+                href="/dashboard/settings"
                 aria-label="Reminders and settings"
                 className="relative grid size-11 place-items-center rounded-xl text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
               >
@@ -214,7 +214,7 @@ export function AppShell({
                 </button>
               </form>
               <Link
-                href="/app/daily#log-today"
+                href="/dashboard#log-today"
                 className="ml-1 hidden h-10 items-center gap-2 rounded-full bg-accent px-4 text-[13px] font-medium text-accent-foreground shadow-[var(--shadow-e1)] transition-all duration-200 hover:brightness-110 active:scale-[0.97] sm:inline-flex"
               >
                 <Plus aria-hidden className="size-4" strokeWidth={2.25} />
@@ -233,7 +233,7 @@ export function AppShell({
       </div>
 
       <Link
-        href="/app/daily#log-today"
+        href="/dashboard#log-today"
         className="fixed bottom-[max(1.5rem,calc(env(safe-area-inset-bottom)+0.5rem))] right-5 z-30 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3.5 text-[14px] font-medium text-accent-foreground shadow-[var(--shadow-e3)] transition-transform duration-200 active:scale-95 sm:hidden"
       >
         <Plus aria-hidden className="size-4" strokeWidth={2.25} />

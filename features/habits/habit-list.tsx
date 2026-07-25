@@ -79,7 +79,7 @@ export function HabitList({
         <span className="tabular text-[13px] text-muted-foreground">
           {done} of {habits.length} done ·{" "}
           <Link
-            href="/app/settings/habits"
+            href="/dashboard/settings/habits"
             className="-my-2 inline-flex min-h-11 items-center py-2 font-medium text-accent transition-opacity hover:opacity-70"
           >
             Manage

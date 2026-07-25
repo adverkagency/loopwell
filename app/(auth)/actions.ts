@@ -89,7 +89,7 @@ export async function login(
   }
 
   const next = formData.get("next");
-  redirect(typeof next === "string" && next.startsWith("/") ? next : "/app/daily");
+  redirect(typeof next === "string" && next.startsWith("/") ? next : "/dashboard");
 }
 
 export async function logout(): Promise<void> {
