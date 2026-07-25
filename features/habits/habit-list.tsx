@@ -42,6 +42,7 @@ export function HabitList({
   const hydrated = useHydrated();
   const [, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [pulse, setPulse] = useState<string | null>(null);
   const [optimistic, applyOptimistic] = useOptimistic<
     Optimistic,
     { id: string; state: HabitState | null }
@@ -54,6 +55,7 @@ export function HabitList({
   function toggle(h: DailyHabit, next: HabitState) {
     const target = stateOf(h) === next ? null : next;
     setError(null);
+    if (target === "complete") setPulse(h.id); // completion is the moment worth animating
     startTransition(async () => {
       applyOptimistic({ id: h.id, state: target });
       const res = await setHabitState({
@@ -78,7 +80,7 @@ export function HabitList({
           {done} of {habits.length} done ·{" "}
           <Link
             href="/app/settings/habits"
-            className="font-medium text-accent transition-opacity hover:opacity-70"
+            className="-my-2 inline-flex min-h-11 items-center py-2 font-medium text-accent transition-opacity hover:opacity-70"
           >
             Manage
           </Link>
@@ -135,7 +137,7 @@ export function HabitList({
           return (
             <li key={h.id}>
               <div
-                className={`group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 rounded-3xl p-4 ring-1 transition-all duration-200 hover:shadow-[var(--shadow-e2)] sm:p-5 ${
+                className={`lift group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 rounded-3xl p-4 ring-1 sm:p-5 ${
                   complete
                     ? "bg-accent-soft/60 ring-accent-line/60"
                     : "bg-surface shadow-[var(--shadow-e1)] ring-border"
@@ -149,7 +151,12 @@ export function HabitList({
                     aria-label={`${h.name} — mark complete`}
                     disabled={!hydrated}
                     onClick={() => toggle(h, "complete")}
-                    className={`grid size-6 shrink-0 place-items-center rounded-full border transition-all duration-200 active:scale-90 disabled:cursor-wait ${
+                    onAnimationEnd={() => setPulse((p) => (p === h.id ? null : p))}
+                    /* before:-inset-2.5 gives the 24px circle a 44px hit area
+                       without changing the layout (iOS HIG minimum) */
+                    className={`relative grid size-6 shrink-0 place-items-center rounded-full border transition-colors duration-200 before:absolute before:-inset-2.5 before:content-[''] active:scale-90 disabled:cursor-wait ${
+                      pulse === h.id ? "check-pop" : ""
+                    } ${
                       complete
                         ? "border-accent bg-accent"
                         : "border-border-strong group-hover:border-accent"
@@ -160,7 +167,7 @@ export function HabitList({
                       strokeWidth={2.75}
                       className={`size-3.5 text-accent-foreground transition-opacity duration-200 ${
                         complete ? "opacity-100" : "opacity-0"
-                      }`}
+                      } ${pulse === h.id && complete ? "check-draw" : ""}`}
                     />
                   </button>
                   <div className="min-w-0">
@@ -231,7 +238,7 @@ function StateButton({
       aria-pressed={active}
       disabled={disabled}
       onClick={onClick}
-      className={`grid size-9 place-items-center rounded-full transition-all duration-200 active:scale-90 disabled:cursor-wait disabled:opacity-60 ${
+      className={`relative grid size-9 place-items-center rounded-full transition-all duration-200 before:absolute before:-inset-1 before:content-[''] active:scale-90 disabled:cursor-wait disabled:opacity-60 ${
         active
           ? "bg-accent text-accent-foreground"
           : "text-muted-foreground hover:bg-secondary hover:text-foreground"

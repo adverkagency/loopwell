@@ -25,20 +25,20 @@ export function WeekBars({
         {days.map((d) => (
           <div key={d.date} className="flex h-full flex-1 flex-col items-center gap-1">
             {/* Full-height sunken track so a 0% day still reads as "a day", not a blank */}
-            <div className="relative w-full flex-1 overflow-hidden rounded-md bg-sunken">
+            <div className="relative w-full flex-1 overflow-hidden rounded-md bg-secondary">
               <div
-                className="absolute inset-x-0 bottom-0 rounded-t-md bg-gradient-to-b from-teal-400 to-teal-600"
+                className="absolute inset-x-0 bottom-0 rounded-t-md bg-accent"
                 style={{ height: `${Math.min(100, Math.max(d.ratio > 0 ? 4 : 0, d.ratio * 100))}%` }}
               />
             </div>
-            <span className="text-[10px] text-ink-muted">
+            <span className="text-[10px] text-muted-foreground">
               {weekdayLetter(d.date)}
             </span>
           </div>
         ))}
       </div>
       {empty ? (
-        <p className="mt-3 text-sm text-ink-secondary">
+        <p className="mt-3 text-[13px] text-muted-foreground">
           No habits completed this week yet — today&apos;s a fine place to start.
         </p>
       ) : null}
@@ -80,7 +80,7 @@ export function TrendLine({
         strokeWidth="3"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="stroke-[var(--lw-teal-500)]"
+        className="stroke-[var(--accent)]"
       />
     </svg>
   );
@@ -107,7 +107,7 @@ export function Heatmap({
           />
         ))}
       </div>
-      <div className="mt-3 flex items-center justify-between text-xs text-ink-muted">
+      <div className="mt-3 flex items-center justify-between text-[12px] text-muted-foreground">
         <span>Last {days.length} days</span>
         <span aria-hidden className="flex items-center gap-1.5">
           Less
@@ -121,7 +121,7 @@ export function Heatmap({
           More
         </span>
       </div>
-      <p className="mt-2 text-xs text-ink-muted">
+      <p className="mt-2 text-[12px] text-muted-foreground">
         Each square is a day — deeper teal means more habits completed. Hover a
         square for the exact date and percentage.
       </p>
@@ -130,7 +130,7 @@ export function Heatmap({
 }
 
 function heatColor(ratio: number): string {
-  if (ratio <= 0) return "var(--lw-bg-sunken)";
+  if (ratio <= 0) return "var(--lw-bg-secondary)";
   if (ratio < 0.35) return "var(--lw-teal-100)";
   if (ratio < 0.6) return "var(--lw-teal-300)";
   if (ratio < 0.85) return "var(--lw-teal-500)";

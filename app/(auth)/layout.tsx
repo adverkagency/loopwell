@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Fraunces, Inter } from "next/font/google";
-import { Infinity as InfinityIcon, Quote } from "lucide-react";
+import { Quote } from "lucide-react";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -28,9 +28,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="grid min-h-dvh lg:grid-cols-2">
         <div className="relative flex flex-col px-6 py-8 md:px-12 md:py-12">
           <Link href="/" className="flex items-center gap-2">
-            <div className="grid h-8 w-8 place-items-center rounded-lg bg-lp-ink text-lp-bg">
-              <InfinityIcon className="h-4 w-4" />
-            </div>
+            <span aria-hidden className="grid size-8 shrink-0 place-items-center rounded-xl bg-lp-primary">
+              <span className="size-2.5 rounded-full border-[2.5px] border-lp-primary-fg" />
+            </span>
             <span className="font-display text-xl text-lp-ink">Loopwell</span>
           </Link>
 

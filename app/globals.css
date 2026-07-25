@@ -278,6 +278,95 @@ h1, h2, h3 { text-wrap: balance; }
   backdrop-filter: blur(20px) saturate(150%);
 }
 
+/* iOS-app feel: no grey flash on tap, no rubber-band chaining, momentum scroll */
+html,
+body {
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
+}
+body {
+  -webkit-overflow-scrolling: touch;
+}
+@media (hover: none) {
+  /* Touch devices never get a stuck hover state */
+  .lift:hover { box-shadow: var(--shadow-e1); transform: none; }
+}
+
+/* Reactive Lift — the one hover elevation used across every card */
+.lift {
+  transition:
+    box-shadow 0.22s var(--ease-calm),
+    transform 0.22s var(--ease-calm),
+    border-color 0.22s var(--ease-calm);
+}
+.lift:hover {
+  box-shadow: var(--shadow-e2);
+  transform: translateY(-2px);
+}
+.lift:active { transform: translateY(0); }
+
+/* Entrance stagger — set --i on the item to offset it */
+@keyframes lw-fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.fade-up {
+  animation: lw-fade-up 0.5s var(--ease-calm) both;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+
+/* Habit checkbox — the completion moment */
+@keyframes lw-check-pop {
+  0% { transform: scale(1); }
+  38% { transform: scale(1.28); }
+  100% { transform: scale(1); }
+}
+.check-pop { animation: lw-check-pop 0.34s var(--ease-calm); }
+
+@keyframes lw-check-draw {
+  from { stroke-dashoffset: 24; }
+  to { stroke-dashoffset: 0; }
+}
+.check-draw {
+  stroke-dasharray: 24;
+  animation: lw-check-draw 0.28s var(--ease-calm) 0.06s both;
+}
+
+/* Transient "Saved" confirmation */
+@keyframes lw-flash-in {
+  from { opacity: 0; transform: translateY(4px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+.flash-in { animation: lw-flash-in 0.24s var(--ease-calm) both; }
+
+/* Mobile drawer */
+@keyframes lw-drawer-in {
+  from { transform: translateX(-100%); }
+  to { transform: none; }
+}
+@keyframes lw-scrim-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.drawer-in { animation: lw-drawer-in 0.32s var(--ease-calm) both; }
+.scrim-in { animation: lw-scrim-in 0.24s ease-out both; }
+
+/* Skeleton shimmer */
+@keyframes lw-shimmer {
+  from { background-position: 180% 0; }
+  to { background-position: -80% 0; }
+}
+.skeleton {
+  background-image: linear-gradient(
+    90deg,
+    var(--secondary) 0%,
+    color-mix(in oklab, var(--secondary) 55%, var(--surface)) 45%,
+    var(--secondary) 90%
+  );
+  background-size: 220% 100%;
+  animation: lw-shimmer 1.5s linear infinite;
+}
+
 .no-scrollbar { scrollbar-width: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 
@@ -318,7 +407,9 @@ h1, h2, h3 { text-wrap: balance; }
   --lp-hairline: oklch(90% 0.008 90);
   --lp-ink: oklch(14% 0.015 260);
   --lp-muted: oklch(50% 0.015 260);
-  --lp-primary: oklch(35% 0.075 160);
+  /* Same hue family as the in-app accent (152) so one green runs through the
+     whole brand; the marketing green stays a touch deeper for print-like copy. */
+  --lp-primary: oklch(38% 0.055 152);
   --lp-primary-fg: oklch(98.5% 0.006 90);
   --lp-accent: oklch(72% 0.14 75);
   --lp-success: oklch(62% 0.14 150);

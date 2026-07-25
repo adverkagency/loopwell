@@ -11,6 +11,13 @@ import {
 } from "./actions";
 import { goalProgressPct } from "./progress";
 import { PlusIcon, CheckIcon } from "@/components/ui/icons";
+import {
+  CARD_BASE,
+  EmptyState,
+  LoopIllustration,
+  buttonClass,
+} from "@/components/ui/kit";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 export type Goal = {
   id: string;
@@ -27,6 +34,7 @@ export function GoalBoard({ goals }: { goals: Goal[] }) {
   const [adding, setAdding] = useState(false);
   const [editing, setEditing] = useState<string | null>(null);
   const [celebrating, setCelebrating] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<Goal | null>(null);
   const [, startTransition] = useTransition();
 
   const active = goals.filter((g) => !g.completed_at);
@@ -39,69 +47,87 @@ export function GoalBoard({ goals }: { goals: Goal[] }) {
 
   return (
     <div className="flex flex-col gap-6">
+      <ConfirmDialog
+        open={deleting !== null}
+        title={`Delete "${deleting?.label ?? ""}"?`}
+        body="This removes the goal and its progress. It can't be undone."
+        confirmLabel="Delete goal"
+        onCancel={() => setDeleting(null)}
+        onConfirm={() => {
+          const id = deleting!.id;
+          setDeleting(null);
+          startTransition(() => void deleteGoal(id));
+        }}
+      />
+
       {/* Goal-completion celebration — the one deliberately big moment (UX §1.19) */}
       {celebrating ? (
         <div
           role="dialog"
           aria-modal="true"
           aria-label="Goal completed"
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-paper/95 px-6 text-center backdrop-blur-sm"
+          className="scrim-in fixed inset-0 z-50 flex flex-col items-center justify-center bg-canvas/95 px-6 text-center backdrop-blur-sm"
         >
-          <div aria-hidden className="text-7xl">🎉</div>
-          <h2 className="mt-4 text-3xl font-bold tracking-tight text-ink">
+          <div aria-hidden className="check-pop text-7xl">
+            🎉
+          </div>
+          <h2 className="rise mt-5 text-[28px] font-medium leading-tight tracking-[-0.015em] sm:text-[32px]">
             {celebrating} — done!
           </h2>
-          <p className="mt-2 max-w-[40ch] text-sm text-ink-secondary">
+          <p className="rise mt-3 max-w-[40ch] text-[15px] leading-relaxed text-muted-foreground">
             Goals like this are rare. Take a second — you earned it.
           </p>
           <button
             type="button"
             autoFocus
             onClick={() => setCelebrating(null)}
-            className="mt-8 flex min-h-11 items-center rounded-full bg-primary px-6 text-sm font-semibold text-on-primary shadow-rest transition hover:bg-primary-hover"
+            className={`${buttonClass("primary")} mt-8`}
           >
             Keep going
           </button>
         </div>
       ) : null}
 
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-ink-secondary">
+      <div className="flex items-center justify-between gap-4">
+        <p className="tabular text-[13px] text-muted-foreground">
           {active.length === 0
             ? "Nothing in flight."
             : `${active.length} in flight`}
         </p>
         <button
           type="button"
+          aria-expanded={adding}
           onClick={() => {
             setAdding((v) => !v);
             setEditing(null);
           }}
-          className="flex min-h-10 items-center gap-1.5 rounded-full bg-coral-500 px-4 text-xs font-semibold text-[#2a1a08] shadow-rest-xs transition hover:bg-coral-600"
+          className={buttonClass("primary", "sm")}
         >
           <PlusIcon size={14} /> New goal
         </button>
       </div>
 
       {adding ? (
-        <div className="rounded-card bg-elevated ring-1 ring-border p-5 shadow-rest">
+        <div className={`${CARD_BASE} rise p-5 sm:p-6`}>
           <GoalForm action={createGoal} onDone={() => setAdding(false)} />
         </div>
       ) : null}
 
       {active.length === 0 && !adding ? (
-        <div className="flex flex-col items-center gap-3 rounded-card bg-elevated ring-1 ring-border p-8 text-center shadow-rest">
-          <p className="text-sm text-ink-secondary">
-            Set your first goal — anything you&apos;re working toward.
-          </p>
-          <button
-            type="button"
-            onClick={() => setAdding(true)}
-            className="flex min-h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary shadow-rest-xs transition hover:bg-primary-hover"
-          >
-            Set your first goal
-          </button>
-        </div>
+        <EmptyState
+          illustration={<LoopIllustration />}
+          title="Set your first goal"
+          body="Goals are the bigger arcs behind your daily habits — a distance to run, a book count, a weight to reach. Give one a target and Loopwell tracks the gap for you."
+          action={
+            <button
+              type="button"
+              onClick={() => setAdding(true)}
+              className={buttonClass("primary")}
+            >
+              Create your first goal
+            </button>
+          }
+        />
       ) : null}
 
       <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2">
@@ -111,11 +137,11 @@ export function GoalBoard({ goals }: { goals: Goal[] }) {
             <section
               key={g.id}
               aria-label={g.label}
-              className="flex flex-col gap-3 rounded-card bg-elevated ring-1 ring-border p-5 shadow-rest"
+              className={`${CARD_BASE} lift flex flex-col gap-3 p-5 sm:p-6`}
             >
               <div className="flex items-center justify-between gap-2">
-                <h2 className="text-base font-semibold tracking-tight text-ink">{g.label}</h2>
-                <span className="tabular text-sm text-ink-muted">{pct}%</span>
+                <h2 className="text-[15px] font-semibold tracking-tight">{g.label}</h2>
+                <span className="tabular text-[13px] text-muted-foreground">{pct}%</span>
               </div>
               <div
                 role="progressbar"
@@ -123,14 +149,14 @@ export function GoalBoard({ goals }: { goals: Goal[] }) {
                 aria-valuemin={0}
                 aria-valuemax={100}
                 aria-label={`${g.label} progress`}
-                className="h-2.5 overflow-hidden rounded-full bg-sunken"
+                className="h-2 overflow-hidden rounded-full bg-secondary"
               >
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-teal-400 to-teal-600 transition-[width] duration-300"
+                  className="h-full rounded-full bg-accent transition-[width] duration-700 ease-[var(--ease-calm)]"
                   style={{ width: `${pct}%` }}
                 />
               </div>
-              <div className="tabular flex justify-between text-sm text-ink-muted">
+              <div className="tabular flex justify-between text-[13px] text-muted-foreground">
                 <span>
                   {g.current_value} / {g.target_value}
                   {g.unit ? ` ${g.unit}` : ""}
@@ -142,31 +168,27 @@ export function GoalBoard({ goals }: { goals: Goal[] }) {
                 <button
                   type="button"
                   onClick={() => complete(g)}
-                  className="flex min-h-9 items-center gap-1.5 rounded-full bg-success px-4 text-xs font-semibold text-on-success transition hover:opacity-90"
+                  className={buttonClass("primary", "sm")}
                 >
                   <CheckIcon size={13} /> Mark complete
                 </button>
                 <button
                   type="button"
                   onClick={() => setEditing(editing === g.id ? null : g.id)}
-                  className="flex min-h-9 items-center rounded-full border border-hairline-strong px-4 text-xs font-semibold text-ink transition hover:bg-surface-hover"
+                  className="inline-flex h-9 items-center gap-2 rounded-full bg-secondary px-3.5 text-[13px] font-medium text-secondary-foreground transition-all duration-200 hover:bg-accent-soft hover:text-accent active:scale-[0.97]"
                 >
                   {editing === g.id ? "Close" : "Edit"}
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    if (confirm(`Delete "${g.label}"? This can't be undone.`)) {
-                      startTransition(() => void deleteGoal(g.id));
-                    }
-                  }}
-                  className="flex min-h-9 items-center rounded-full px-3 text-xs font-semibold text-ink-muted transition hover:bg-surface-hover hover:text-danger"
+                  onClick={() => setDeleting(g)}
+                  className={buttonClass("quiet", "sm", "hover:!text-danger")}
                 >
                   Delete
                 </button>
               </div>
               {editing === g.id ? (
-                <div className="border-t border-hairline pt-4">
+                <div className="rise border-t border-border pt-4">
                   <GoalForm
                     goal={g}
                     action={updateGoal.bind(null, g.id)}
@@ -181,23 +203,23 @@ export function GoalBoard({ goals }: { goals: Goal[] }) {
 
       {done.length > 0 ? (
         <section aria-label="Completed goals">
-          <h2 className="mb-3 text-base font-semibold tracking-tight text-ink">
-            Completed <span className="tabular text-sm font-normal text-ink-muted">{done.length}</span>
+          <h2 className="mb-3 text-[15px] font-semibold tracking-tight">
+            Completed <span className="tabular text-[13px] font-normal text-muted-foreground">{done.length}</span>
           </h2>
           <ul className="flex flex-col gap-2">
             {done.map((g) => (
               <li
                 key={g.id}
-                className="flex items-center gap-3 rounded-control border border-hairline bg-elevated px-4 py-3 opacity-75"
+                className="flex items-center gap-3 rounded-2xl bg-surface px-4 py-3 ring-1 ring-border transition-opacity duration-200 hover:opacity-100 opacity-80"
               >
-                <span className="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-success text-on-success">
+                <span className="grid size-6 flex-none place-items-center rounded-full bg-accent text-accent-foreground">
                   <CheckIcon size={12} />
                 </span>
-                <span className="flex-1 text-sm font-medium text-ink-secondary">{g.label}</span>
+                <span className="flex-1 text-[13px] font-medium text-muted-foreground">{g.label}</span>
                 <button
                   type="button"
                   onClick={() => startTransition(() => void setGoalCompleted(g.id, false))}
-                  className="text-xs font-semibold text-ink-muted hover:text-ink"
+                  className="rounded-full px-2 py-1 text-[12px] font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                 >
                   Reopen
                 </button>
@@ -223,7 +245,7 @@ function ProgressEditor({ goal }: { goal: Goal }) {
   const [, startTransition] = useTransition();
   return (
     <div className="flex items-center gap-2">
-      <label htmlFor={`gp-${goal.id}`} className="text-xs font-medium text-ink-secondary">
+      <label htmlFor={`gp-${goal.id}`} className="text-[12px] font-medium text-muted-foreground">
         Update progress
       </label>
       <input
@@ -239,7 +261,7 @@ function ProgressEditor({ goal }: { goal: Goal }) {
             );
           }
         }}
-        className="tabular min-h-9 w-28 rounded-field border-[1.5px] border-hairline-strong bg-elevated px-2 text-sm text-ink transition focus:border-teal-500 focus:shadow-focus-ring focus:outline-none"
+        className="tabular h-10 w-28 rounded-xl bg-secondary px-3 text-[13px] text-foreground ring-1 ring-border transition-all duration-200 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-ring/45"
       />
     </div>
   );
@@ -264,31 +286,31 @@ function GoalForm({
   );
 
   const input =
-    "min-h-11 rounded-field border-[1.5px] border-hairline-strong bg-elevated px-3 text-base text-ink placeholder:text-ink-muted transition focus:border-teal-500 focus:shadow-focus-ring focus:outline-none";
+    "h-11 w-full rounded-xl bg-secondary px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground ring-1 ring-border transition-all duration-200 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-ring/45";
 
   return (
     <form action={formAction} className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <label htmlFor="g-label" className="text-sm font-medium text-ink-secondary">Label</label>
+        <label htmlFor="g-label" className="text-[13px] font-medium text-muted-foreground">Label</label>
         <input id="g-label" name="label" defaultValue={goal?.label} required maxLength={120} placeholder="e.g. Run a 10K" className={input} />
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div className="flex flex-col gap-2">
-          <label htmlFor="g-target" className="text-sm font-medium text-ink-secondary">Target value</label>
+          <label htmlFor="g-target" className="text-[13px] font-medium text-muted-foreground">Target value</label>
           <input id="g-target" name="target_value" type="number" step="any" required defaultValue={goal?.target_value} placeholder="10" className={`tabular ${input}`} />
         </div>
         <div className="flex flex-col gap-2">
-          <label htmlFor="g-current" className="text-sm font-medium text-ink-secondary">Current value</label>
+          <label htmlFor="g-current" className="text-[13px] font-medium text-muted-foreground">Current value</label>
           <input id="g-current" name="current_value" type="number" step="any" defaultValue={goal?.current_value ?? 0} className={`tabular ${input}`} />
         </div>
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div className="flex flex-col gap-2">
-          <label htmlFor="g-unit" className="text-sm font-medium text-ink-secondary">Unit (optional)</label>
+          <label htmlFor="g-unit" className="text-[13px] font-medium text-muted-foreground">Unit (optional)</label>
           <input id="g-unit" name="unit" defaultValue={goal?.unit ?? ""} maxLength={20} placeholder="books, lbs, $" className={input} />
         </div>
         <div className="flex flex-col gap-2">
-          <label htmlFor="g-deadline" className="text-sm font-medium text-ink-secondary">Deadline (optional)</label>
+          <label htmlFor="g-deadline" className="text-[13px] font-medium text-muted-foreground">Deadline (optional)</label>
           <input id="g-deadline" name="deadline" type="date" defaultValue={goal?.deadline ?? ""} className={`tabular ${input}`} />
         </div>
       </div>
@@ -297,10 +319,10 @@ function GoalForm({
         <p role="alert" className="text-sm font-medium text-danger">{state.error}</p>
       ) : null}
       <div className="flex gap-2">
-        <button type="submit" disabled={pending} className="flex min-h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary shadow-rest-xs transition hover:bg-primary-hover disabled:opacity-45">
+        <button type="submit" disabled={pending} className="flex min-h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary shadow-[var(--shadow-e1)] transition hover:bg-primary-hover disabled:opacity-45">
           {pending ? "Saving…" : goal ? "Save changes" : "Save goal"}
         </button>
-        <button type="button" onClick={onDone} className="flex min-h-11 items-center rounded-full border border-hairline-strong px-5 text-sm font-semibold text-ink transition hover:bg-surface-hover">
+        <button type="button" onClick={onDone} className={buttonClass("ghost")}>
           Cancel
         </button>
       </div>

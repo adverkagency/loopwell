@@ -23,15 +23,15 @@ function ModuleCard({
   children: React.ReactNode;
 }) {
   return (
-    <details className="group overflow-hidden rounded-card bg-elevated ring-1 ring-border shadow-rest">
-      <summary className="flex min-h-11 cursor-pointer select-none items-center gap-3 p-5 transition hover:bg-surface-hover [&::-webkit-details-marker]:hidden">
-        <h2 className="text-base font-semibold tracking-tight text-ink">{title}</h2>
-        <span className="tabular flex-1 text-right text-sm text-ink-muted group-open:invisible">
+    <details className="group overflow-hidden rounded-3xl bg-surface shadow-[var(--shadow-e1)] ring-1 ring-border transition-shadow duration-200 open:shadow-[var(--shadow-e2)]">
+      <summary className="flex min-h-11 cursor-pointer select-none items-center gap-3 p-5 transition-colors duration-200 hover:bg-secondary/60 [&::-webkit-details-marker]:hidden">
+        <h2 className="text-[15px] font-semibold tracking-tight">{title}</h2>
+        <span className="tabular flex-1 text-right text-[13px] text-muted-foreground group-open:invisible">
           {summary}
         </span>
         <ChevronDownIcon
           size={18}
-          className="text-ink-muted transition-transform duration-200 group-open:rotate-180"
+          className="text-muted-foreground transition-transform duration-300 ease-[var(--ease-calm)] group-open:rotate-180"
         />
       </summary>
       <div className="px-5 pb-5">{children}</div>
@@ -40,7 +40,7 @@ function ModuleCard({
 }
 
 const inputCls =
-  "min-h-11 rounded-field border-[1.5px] border-hairline-strong bg-elevated px-3 text-base text-ink placeholder:text-ink-muted transition focus:border-teal-500 focus:shadow-focus-ring focus:outline-none";
+  "h-11 w-full rounded-xl bg-secondary px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground ring-1 ring-border transition-all duration-200 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-ring/45";
 
 /* ---------- Nutrition ---------- */
 
@@ -142,7 +142,7 @@ export function NutritionCard({
     >
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
-          <label htmlFor="food-q" className="text-sm font-medium text-ink-secondary">
+          <label htmlFor="food-q" className="text-[13px] font-medium text-muted-foreground">
             Log food
           </label>
           <input
@@ -154,38 +154,38 @@ export function NutritionCard({
             className={inputCls}
           />
           {searchDown ? (
-            <p className="text-xs text-ink-muted">
+            <p className="text-[12px] text-muted-foreground">
               Search is unavailable right now — log manually below instead.
             </p>
           ) : null}
-          <p aria-live="polite" className={`text-xs ${justLogged ? "font-medium text-success" : "text-ink-muted"} ${searchStatus === "searching" || justLogged ? "" : "sr-only"}`}>
+          <p aria-live="polite" className={`text-xs ${justLogged ? "font-medium text-accent" : "text-muted-foreground"} ${searchStatus === "searching" || justLogged ? "" : "sr-only"}`}>
             {justLogged ? `Added ${justLogged}.` : searchStatus === "searching" ? "Searching…" : ""}
           </p>
         </div>
 
         {results.length > 0 ? (
-          <ul className="flex flex-col divide-y divide-[var(--lw-border)] rounded-control border border-hairline">
+          <ul className="flex flex-col divide-y divide-border rounded-2xl ring-1 ring-border">
             {results.map((f) => (
               <li key={`${f.source}-${f.source_ref}-${f.name}`}>
                 <button
                   type="button"
                   onClick={() => logFood(f)}
-                  className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition hover:bg-surface-hover"
+                  className="flex w-full items-center gap-3 px-4 py-2.5 text-left transition hover:bg-secondary"
                 >
-                  <span className="min-w-0 flex-1 truncate text-sm font-medium text-ink">
+                  <span className="min-w-0 flex-1 truncate text-[14px] font-medium">
                     {f.name}
                   </span>
-                  <span className="tabular flex-none text-xs text-ink-muted">
+                  <span className="tabular flex-none text-[12px] text-muted-foreground">
                     {f.calories} cal
                   </span>
-                  <PlusIcon size={14} className="flex-none text-teal-600" />
+                  <PlusIcon size={14} className="flex-none text-accent" />
                 </button>
               </li>
             ))}
           </ul>
         ) : null}
         {query.trim().length >= 2 && searchStatus === "done" && results.length === 0 && !searchDown ? (
-          <p className="text-xs text-ink-muted">
+          <p className="text-[12px] text-muted-foreground">
             No matches — log it manually below.
           </p>
         ) : null}
@@ -194,7 +194,7 @@ export function NutritionCard({
           type="button"
           onClick={() => setManual((v) => !v)}
           aria-expanded={manual}
-          className="self-start text-sm font-semibold text-teal-600 hover:text-teal-700"
+          className="self-start rounded-lg px-1 py-0.5 text-[13px] font-medium text-accent transition-opacity hover:opacity-70"
         >
           {manual ? "Hide manual entry" : "Log manually instead"}
         </button>
@@ -202,13 +202,13 @@ export function NutritionCard({
 
         {entries.length > 0 ? (
           <>
-            <ul className="flex flex-col divide-y divide-[var(--lw-border)]">
+            <ul className="flex flex-col divide-y divide-border">
               {entries.map((e) => (
                 <li key={e.id} className="flex items-center gap-3 py-2">
-                  <span className="min-w-0 flex-1 truncate text-sm text-ink">
+                  <span className="min-w-0 flex-1 truncate text-[14px]">
                     {e.food_name}
                   </span>
-                  <span className="tabular flex-none text-xs text-ink-muted">
+                  <span className="tabular flex-none text-[12px] text-muted-foreground">
                     {Math.round(Number(e.calories))} cal
                   </span>
                   <button
@@ -217,14 +217,14 @@ export function NutritionCard({
                     onClick={() =>
                       startTransition(() => void deleteNutrition(e.id))
                     }
-                    className="flex h-8 w-8 flex-none items-center justify-center rounded-full text-ink-muted transition hover:bg-surface-hover hover:text-danger"
+                    className="grid size-9 flex-none place-items-center rounded-full text-muted-foreground transition-all duration-200 hover:bg-danger/10 hover:text-danger active:scale-90"
                   >
                     <XIcon size={13} />
                   </button>
                 </li>
               ))}
             </ul>
-            <div className="tabular grid grid-cols-4 gap-2 rounded-control bg-sunken p-3 text-center">
+            <div className="tabular grid grid-cols-4 gap-2 rounded-control bg-secondary p-3 text-center">
               {(
                 [
                   ["Cal", Math.round(totals.cal).toLocaleString()],
@@ -234,23 +234,23 @@ export function NutritionCard({
                 ] as const
               ).map(([label, value]) => (
                 <div key={label}>
-                  <div className="text-xs text-ink-muted">{label}</div>
-                  <strong className="text-sm text-ink">{value}</strong>
+                  <div className="text-[12px] text-muted-foreground">{label}</div>
+                  <strong className="text-[14px]">{value}</strong>
                 </div>
               ))}
             </div>
             <details>
-              <summary className="cursor-pointer text-sm text-ink-muted">
+              <summary className="cursor-pointer text-[13px] text-muted-foreground">
                 Advanced (fiber, sugar)
               </summary>
               <div className="tabular mt-2 grid grid-cols-2 gap-2 text-center">
                 <div>
-                  <div className="text-xs text-ink-muted">Fiber</div>
-                  <strong className="text-sm text-ink">{Math.round(totals.fiber)}g</strong>
+                  <div className="text-[12px] text-muted-foreground">Fiber</div>
+                  <strong className="text-[14px]">{Math.round(totals.fiber)}g</strong>
                 </div>
                 <div>
-                  <div className="text-xs text-ink-muted">Sugar</div>
-                  <strong className="text-sm text-ink">{Math.round(totals.sugar)}g</strong>
+                  <div className="text-[12px] text-muted-foreground">Sugar</div>
+                  <strong className="text-[14px]">{Math.round(totals.sugar)}g</strong>
                 </div>
               </div>
             </details>
@@ -293,9 +293,9 @@ function ManualFood({ today, onDone }: { today: string; onDone: () => void }) {
   }
 
   return (
-    <form ref={formRef} onSubmit={submit} className="flex flex-col gap-3 rounded-control border border-hairline p-4">
+    <form ref={formRef} onSubmit={submit} className="flex flex-col gap-3 rounded-2xl ring-1 ring-border p-4">
       <div className="flex flex-col gap-2">
-        <label htmlFor="mf-name" className="text-sm font-medium text-ink-secondary">Food</label>
+        <label htmlFor="mf-name" className="text-[13px] font-medium text-muted-foreground">Food</label>
         <input id="mf-name" name="food_name" required maxLength={200} placeholder="e.g. Chicken rice bowl" className={inputCls} />
       </div>
       <div className="grid grid-cols-4 gap-2">
@@ -308,7 +308,7 @@ function ManualFood({ today, onDone }: { today: string; onDone: () => void }) {
           ] as const
         ).map(([name, label]) => (
           <div key={name} className="flex flex-col gap-1">
-            <label htmlFor={`mf-${name}`} className="text-xs font-medium text-ink-secondary">{label}</label>
+            <label htmlFor={`mf-${name}`} className="text-[12px] font-medium text-muted-foreground">{label}</label>
             <input id={`mf-${name}`} name={name} type="number" min="0" step="any" placeholder="0" className={`tabular ${inputCls} min-h-10 px-2 text-sm`} />
           </div>
         ))}
@@ -377,11 +377,11 @@ export function WorkoutCard({
     >
       <div className="flex flex-col gap-4">
         {entries.length > 0 ? (
-          <ul className="flex flex-col divide-y divide-[var(--lw-border)]">
+          <ul className="flex flex-col divide-y divide-border">
             {entries.map((w) => (
               <li key={w.id} className="flex items-center gap-3 py-2">
-                <span className="min-w-0 flex-1 truncate text-sm text-ink">{w.name}</span>
-                <span className="tabular flex-none text-xs text-ink-muted">
+                <span className="min-w-0 flex-1 truncate text-[14px]">{w.name}</span>
+                <span className="tabular flex-none text-[12px] text-muted-foreground">
                   {w.kind === "strength"
                     ? [w.sets && `${w.sets}×${w.reps ?? "?"}`, w.weight_kg && `${w.weight_kg}kg`]
                         .filter(Boolean)
@@ -394,7 +394,7 @@ export function WorkoutCard({
                   type="button"
                   aria-label={`Remove ${w.name}`}
                   onClick={() => startTransition(() => void deleteWorkout(w.id))}
-                  className="flex h-8 w-8 flex-none items-center justify-center rounded-full text-ink-muted transition hover:bg-surface-hover hover:text-danger"
+                  className="grid size-9 flex-none place-items-center rounded-full text-muted-foreground transition-all duration-200 hover:bg-danger/10 hover:text-danger active:scale-90"
                 >
                   <XIcon size={13} />
                 </button>
@@ -412,8 +412,8 @@ export function WorkoutCard({
               onClick={() => setKind(k)}
               className={`flex min-h-9 items-center rounded-full border px-4 text-xs font-semibold capitalize transition ${
                 kind === k
-                  ? "border-teal-400 bg-teal-50 text-teal-700"
-                  : "border-hairline-strong text-ink hover:bg-surface-hover"
+                  ? "bg-accent text-accent-foreground"
+                  : "bg-secondary text-secondary-foreground hover:bg-accent-soft hover:text-accent"
               }`}
             >
               {k}
@@ -423,7 +423,7 @@ export function WorkoutCard({
 
         <form ref={formRef} onSubmit={submit} className="flex flex-col gap-3">
           <div className="flex flex-col gap-2">
-            <label htmlFor="wk-name" className="text-sm font-medium text-ink-secondary">Exercise</label>
+            <label htmlFor="wk-name" className="text-[13px] font-medium text-muted-foreground">Exercise</label>
             <input id="wk-name" name="name" required maxLength={120} placeholder={kind === "strength" ? "e.g. Bench press" : "e.g. Evening run"} className={inputCls} />
           </div>
           {kind === "strength" ? (
@@ -451,7 +451,7 @@ export function WorkoutCard({
 function NumField({ name, label, step }: { name: string; label: string; step?: string }) {
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={`wk-${name}`} className="text-xs font-medium text-ink-secondary">{label}</label>
+      <label htmlFor={`wk-${name}`} className="text-[12px] font-medium text-muted-foreground">{label}</label>
       <input id={`wk-${name}`} name={name} type="number" min="0" step={step ?? "1"} className={`tabular ${inputCls} min-h-10 px-2 text-sm`} />
     </div>
   );
@@ -485,7 +485,7 @@ export function JournalCard({
   return (
     <ModuleCard title="Journal" summary={initialBody ? "Entry saved" : "No entry yet — tap to write"}>
       <div className="flex flex-col gap-3">
-        <label htmlFor="journal-body" className="text-sm font-medium text-ink-secondary">
+        <label htmlFor="journal-body" className="text-[13px] font-medium text-muted-foreground">
           Today&apos;s thoughts
         </label>
         <textarea
@@ -495,9 +495,9 @@ export function JournalCard({
             if (e.currentTarget.value !== initialBody) persist(e.currentTarget.value);
           }}
           placeholder="Win of the day, gratitude, lesson learned — whatever's on your mind. All optional."
-          className="min-h-28 resize-y rounded-field border-[1.5px] border-hairline-strong bg-elevated p-3 text-base leading-relaxed text-ink placeholder:text-ink-muted transition focus:border-teal-500 focus:shadow-focus-ring focus:outline-none"
+          className="min-h-28 resize-y rounded-2xl bg-secondary p-3.5 text-[14px] leading-relaxed text-foreground placeholder:text-muted-foreground ring-1 ring-border transition-all duration-200 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-ring/45"
         />
-        <p aria-live="polite" className="text-xs text-ink-muted">
+        <p aria-live="polite" className="text-[12px] text-muted-foreground">
           {saved ? "Saved." : "Saves when you click away."}
         </p>
         {error ? <p role="alert" className="text-sm font-medium text-danger">{error}</p> : null}

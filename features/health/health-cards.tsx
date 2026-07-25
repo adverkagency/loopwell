@@ -3,6 +3,8 @@
 import { useOptimistic, useRef, useState, useTransition } from "react";
 import { addWater, setMood, setSleep, setWeight } from "./actions";
 import { useHydrated } from "@/lib/use-hydrated";
+import { useSavedFlash } from "@/lib/use-saved-flash";
+import { CARD_BASE, SavedFlash, buttonClass } from "@/components/ui/kit";
 import {
   bmi,
   bmiCategory,
@@ -25,6 +27,7 @@ export function WaterCard({
 }) {
   const hydrated = useHydrated();
   const [, startTransition] = useTransition();
+  const { saved, flash } = useSavedFlash();
   const [optimisticTotal, addOptimistic] = useOptimistic(
     totalMl,
     (total, amount: number) => total + amount
@@ -34,6 +37,7 @@ export function WaterCard({
     startTransition(async () => {
       addOptimistic(amount);
       await addWater({ date: today, amount_ml: amount });
+      flash();
     });
   }
 
@@ -44,22 +48,26 @@ export function WaterCard({
   return (
     <section
       aria-label="Water"
-      className="rounded-card bg-elevated ring-1 ring-border p-5 shadow-rest"
+      className={`${CARD_BASE} p-5 sm:p-6`}
     >
-      <h2 className="mb-4 text-base font-semibold tracking-tight text-ink">Water</h2>
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <h2 className="text-[15px] font-semibold tracking-tight">Water</h2>
+        {saved ? <SavedFlash label="Logged" /> : null}
+      </div>
       <div className="flex items-center gap-4">
         <div className="relative inline-flex flex-none items-center justify-center">
           <svg width="88" height="88" viewBox="0 0 88 88" className="-rotate-90" role="img"
             aria-label={`Water: ${(optimisticTotal / 1000).toFixed(2)} of ${(goalMl / 1000).toFixed(1)} litres`}>
-            <circle cx="44" cy="44" r={r} fill="none" strokeWidth="8" className="stroke-[var(--lw-bg-sunken)]" />
+            <circle cx="44" cy="44" r={r} fill="none" strokeWidth="8" stroke="var(--accent-soft)" />
             <circle
               cx="44" cy="44" r={r} fill="none" strokeWidth="8" strokeLinecap="round"
-              className="stroke-[var(--lw-teal-500)] transition-[stroke-dashoffset] duration-300"
+              stroke="var(--accent)"
+              className="transition-[stroke-dashoffset] duration-700 ease-[var(--ease-calm)]"
               strokeDasharray={c.toFixed(2)}
               strokeDashoffset={(c * (1 - pct)).toFixed(2)}
             />
           </svg>
-          <span className="tabular absolute text-sm font-bold text-ink">
+          <span className="tabular absolute text-[14px] font-semibold">
             {(optimisticTotal / 1000).toFixed(2)}L
           </span>
         </div>
@@ -70,12 +78,12 @@ export function WaterCard({
               type="button"
               disabled={!hydrated}
               onClick={() => log(amt)}
-              className="flex min-h-9 items-center rounded-full border border-hairline-strong px-4 text-xs font-semibold text-ink transition hover:bg-surface-hover active:scale-[0.96] disabled:cursor-wait disabled:opacity-60"
+              className={buttonClass("ghost", "sm")}
             >
               +{amt === 1000 ? "1L" : `${amt}ml`}
             </button>
           ))}
-          <p className="tabular w-full text-xs text-ink-muted">
+          <p className="tabular w-full text-[12px] text-muted-foreground">
             Goal {(goalMl / 1000).toFixed(1)}L
           </p>
         </div>
@@ -100,6 +108,7 @@ export function WeightCard({
   const [, startTransition] = useTransition();
   const [saved, setSaved] = useState<number | null>(weightKg);
   const [error, setError] = useState<string | null>(null);
+  const { saved: flashed, flash } = useSavedFlash();
   const imperial = unitSystem === "imperial";
 
   function save(raw: string) {
@@ -114,6 +123,7 @@ export function WeightCard({
     startTransition(async () => {
       const res = await setWeight({ date: today, weight_kg: kg });
       if (res.error) setError(res.error);
+      else flash();
     });
   }
 
@@ -123,11 +133,14 @@ export function WeightCard({
   return (
     <section
       aria-label="Weight"
-      className="rounded-card bg-elevated ring-1 ring-border p-5 shadow-rest"
+      className={`${CARD_BASE} p-5 sm:p-6`}
     >
-      <h2 className="mb-4 text-base font-semibold tracking-tight text-ink">Weight</h2>
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <h2 className="text-[15px] font-semibold tracking-tight">Weight</h2>
+        {flashed ? <SavedFlash /> : null}
+      </div>
       <div className="flex flex-col gap-2">
-        <label htmlFor="weight-input" className="text-sm font-medium text-ink-secondary">
+        <label htmlFor="weight-input" className="text-[13px] font-medium text-muted-foreground">
           Today&apos;s weight ({imperial ? "lbs" : "kg"})
         </label>
         {/* Tier 2 logging: single inline input, saves on blur — no Save button */}
@@ -140,17 +153,17 @@ export function WeightCard({
           defaultValue={display}
           onBlur={(e) => save(e.currentTarget.value)}
           placeholder={imperial ? "e.g. 176" : "e.g. 79.8"}
-          className="tabular min-h-11 rounded-field border-[1.5px] border-hairline-strong bg-elevated px-3 text-base text-ink placeholder:text-ink-muted transition focus:border-teal-500 focus:shadow-focus-ring focus:outline-none"
+          className="tabular h-11 w-full rounded-xl bg-secondary px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground ring-1 ring-border transition-all duration-200 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-ring/45"
         />
         {error ? (
-          <p role="alert" className="text-sm font-medium text-danger">{error}</p>
+          <p role="alert" className="text-[13px] font-medium text-danger">{error}</p>
         ) : null}
         {bmiValue !== null ? (
-          <p className="tabular text-xs text-ink-muted">
+          <p className="tabular text-[12px] text-muted-foreground">
             BMI {bmiValue} · {bmiCategory(bmiValue)}
           </p>
         ) : saved !== null && !heightCm ? (
-          <p className="text-xs text-ink-muted">Add your height in Settings to see BMI.</p>
+          <p className="text-[12px] text-muted-foreground">Add your height in Settings to see BMI.</p>
         ) : null}
       </div>
     </section>
@@ -177,6 +190,7 @@ export function SleepCard({
   const [wake, setWake] = useState(initial?.wake_time ?? "");
   const [quality, setQuality] = useState(initial?.quality ?? null);
   const [error, setError] = useState<string | null>(null);
+  const { saved, flash } = useSavedFlash();
 
   function persist(b: string, w: string, q: typeof quality) {
     if (!b || !w) return; // both times required before anything saves
@@ -184,6 +198,7 @@ export function SleepCard({
     startTransition(async () => {
       const res = await setSleep({ date: today, bed_time: b, wake_time: w, quality: q });
       if (res.error) setError(res.error);
+      else flash();
     });
   }
 
@@ -193,12 +208,15 @@ export function SleepCard({
   return (
     <section
       aria-label="Sleep"
-      className="rounded-card bg-elevated ring-1 ring-border p-5 shadow-rest"
+      className={`${CARD_BASE} p-5 sm:p-6`}
     >
-      <h2 className="mb-4 text-base font-semibold tracking-tight text-ink">Sleep</h2>
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <h2 className="text-[15px] font-semibold tracking-tight">Sleep</h2>
+        {saved ? <SavedFlash /> : null}
+      </div>
       <div className="grid grid-cols-2 gap-3">
         <div className="flex flex-col gap-2">
-          <label htmlFor="bed-time" className="text-sm font-medium text-ink-secondary">
+          <label htmlFor="bed-time" className="text-[13px] font-medium text-muted-foreground">
             Bed time
           </label>
           <input
@@ -209,11 +227,11 @@ export function SleepCard({
               setBed(e.target.value);
               persist(e.target.value, wake, quality);
             }}
-            className="tabular min-h-11 rounded-field border-[1.5px] border-hairline-strong bg-elevated px-3 text-base text-ink transition focus:border-teal-500 focus:shadow-focus-ring focus:outline-none"
+            className="tabular h-11 w-full rounded-xl bg-secondary px-3.5 text-[14px] text-foreground ring-1 ring-border transition-all duration-200 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-ring/45"
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label htmlFor="wake-time" className="text-sm font-medium text-ink-secondary">
+          <label htmlFor="wake-time" className="text-[13px] font-medium text-muted-foreground">
             Wake time
           </label>
           <input
@@ -224,12 +242,12 @@ export function SleepCard({
               setWake(e.target.value);
               persist(bed, e.target.value, quality);
             }}
-            className="tabular min-h-11 rounded-field border-[1.5px] border-hairline-strong bg-elevated px-3 text-base text-ink transition focus:border-teal-500 focus:shadow-focus-ring focus:outline-none"
+            className="tabular h-11 w-full rounded-xl bg-secondary px-3.5 text-[14px] text-foreground ring-1 ring-border transition-all duration-200 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-ring/45"
           />
         </div>
       </div>
-      <p className="tabular mt-3 text-sm text-ink-secondary">
-        Duration: <strong className="text-ink">{duration}</strong>
+      <p className="tabular mt-3 text-[13px] text-muted-foreground">
+        Duration: <strong className="text-foreground">{duration}</strong>
       </p>
       <div role="group" aria-label="Sleep quality" className="mt-3 flex gap-2">
         {QUALITIES.map((q) => (
@@ -242,10 +260,10 @@ export function SleepCard({
               setQuality(next);
               persist(bed, wake, next);
             }}
-            className={`flex min-h-9 items-center gap-1.5 rounded-full border px-4 text-xs font-semibold transition active:scale-[0.96] ${
+            className={`inline-flex h-10 items-center gap-1.5 rounded-full px-4 text-[13px] font-medium transition-all duration-200 active:scale-[0.96] ${
               quality === q.value
-                ? "border-teal-400 bg-teal-50 text-teal-700"
-                : "border-hairline-strong text-ink transition hover:bg-surface-hover"
+                ? "bg-accent text-accent-foreground"
+                : "bg-secondary text-secondary-foreground hover:bg-accent-soft hover:text-accent"
             }`}
           >
             <span aria-hidden>{q.emoji}</span> {q.label}
@@ -253,7 +271,7 @@ export function SleepCard({
         ))}
       </div>
       {error ? (
-        <p role="alert" className="mt-2 text-sm font-medium text-danger">{error}</p>
+        <p role="alert" className="mt-2 text-[13px] font-medium text-danger">{error}</p>
       ) : null}
     </section>
   );
@@ -279,6 +297,7 @@ export function MoodCard({
   const [, startTransition] = useTransition();
   const [mood, setMoodState] = useState<number | null>(initial?.mood ?? null);
   const [error, setError] = useState<string | null>(null);
+  const { saved, flash } = useSavedFlash();
   const noteRef = useRef<HTMLInputElement>(null);
 
   function persist(m: number | null, note?: string) {
@@ -291,15 +310,19 @@ export function MoodCard({
         note: note ?? noteRef.current?.value ?? undefined,
       });
       if (res.error) setError(res.error);
+      else flash();
     });
   }
 
   return (
     <section
       aria-label="Mood"
-      className="rounded-card bg-elevated ring-1 ring-border p-5 shadow-rest"
+      className={`${CARD_BASE} p-5 sm:p-6`}
     >
-      <h2 className="mb-4 text-base font-semibold tracking-tight text-ink">Mood</h2>
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <h2 className="text-[15px] font-semibold tracking-tight">Mood</h2>
+        {saved ? <SavedFlash /> : null}
+      </div>
       <div role="group" aria-label="Select today's mood" className="flex flex-wrap gap-2">
         {MOODS.map((m) => (
           <button
@@ -311,10 +334,10 @@ export function MoodCard({
               setMoodState(m.value);
               persist(m.value);
             }}
-            className={`flex h-11 w-11 items-center justify-center rounded-full border text-xl transition active:scale-90 ${
+            className={`grid size-11 place-items-center rounded-full text-xl transition-all duration-200 active:scale-90 ${
               mood === m.value
-                ? "border-teal-400 bg-teal-50"
-                : "border-hairline-strong hover:bg-surface-hover"
+                ? "bg-accent-soft ring-2 ring-accent"
+                : "bg-secondary hover:bg-accent-soft"
             }`}
           >
             <span aria-hidden>{m.emoji}</span>
@@ -322,7 +345,7 @@ export function MoodCard({
         ))}
       </div>
       <div className="mt-4 flex flex-col gap-2">
-        <label htmlFor="mood-note" className="text-sm font-medium text-ink-secondary">
+        <label htmlFor="mood-note" className="text-[13px] font-medium text-muted-foreground">
           Note (optional)
         </label>
         <input
@@ -333,11 +356,11 @@ export function MoodCard({
           defaultValue={initial?.note ?? ""}
           onBlur={() => persist(mood)}
           placeholder="What's driving today's mood?"
-          className="min-h-11 rounded-field border-[1.5px] border-hairline-strong bg-elevated px-3 text-base text-ink placeholder:text-ink-muted transition focus:border-teal-500 focus:shadow-focus-ring focus:outline-none"
+          className="h-11 w-full rounded-xl bg-secondary px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground ring-1 ring-border transition-all duration-200 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-ring/45"
         />
       </div>
       {error ? (
-        <p role="alert" className="mt-2 text-sm font-medium text-danger">{error}</p>
+        <p role="alert" className="mt-2 text-[13px] font-medium text-danger">{error}</p>
       ) : null}
     </section>
   );

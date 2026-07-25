@@ -116,6 +116,13 @@ export function AppShell({
 
   return (
     <div className="min-h-dvh bg-canvas text-foreground">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-accent focus:px-4 focus:py-2 focus:text-[13px] focus:font-medium focus:text-accent-foreground"
+      >
+        Skip to content
+      </a>
+
       {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-[264px] flex-col border-r border-border bg-surface/60 px-4 py-7 lg:flex">
         {nav}
@@ -128,14 +135,20 @@ export function AppShell({
             type="button"
             aria-label="Close navigation"
             onClick={() => setOpen(false)}
-            className="absolute inset-0 bg-foreground/25 backdrop-blur-[2px]"
+            className="scrim-in absolute inset-0 bg-foreground/25 backdrop-blur-[2px]"
           />
-          <div className="absolute inset-y-0 left-0 flex w-[264px] max-w-[85vw] flex-col border-r border-border bg-surface px-4 py-7 shadow-[var(--shadow-e3)]">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation"
+            className="drawer-in absolute inset-y-0 left-0 flex w-[264px] max-w-[85vw] flex-col border-r border-border bg-surface px-4 pb-[max(1.75rem,env(safe-area-inset-bottom))] pt-[max(1.75rem,env(safe-area-inset-top))] shadow-[var(--shadow-e3)]"
+          >
             <button
               type="button"
+              autoFocus
               aria-label="Close navigation"
               onClick={() => setOpen(false)}
-              className="absolute right-3 top-4 grid size-10 place-items-center rounded-xl text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              className="absolute right-3 top-4 grid size-11 place-items-center rounded-xl text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
             >
               <X aria-hidden className="size-[18px]" />
             </button>
@@ -145,7 +158,7 @@ export function AppShell({
       ) : null}
 
       <div className="lg:pl-[264px]">
-        <header className="glass-header sticky top-0 z-20 border-b border-border">
+        <header className="glass-header sticky top-0 z-20 border-b border-border pt-[env(safe-area-inset-top)]">
           <div className="mx-auto flex h-16 max-w-[1280px] items-center gap-3 px-4 sm:h-[72px] sm:px-6 lg:px-10">
             <button
               type="button"
@@ -211,14 +224,17 @@ export function AppShell({
           </div>
         </header>
 
-        <main className="mx-auto max-w-[1280px] space-y-8 px-4 pb-24 pt-6 sm:px-6 md:space-y-10 md:pb-16 md:pt-8 lg:px-10">
+        <main
+          id="main"
+          className="mx-auto max-w-[1280px] space-y-8 px-4 pb-[max(6rem,calc(env(safe-area-inset-bottom)+5rem))] pt-6 sm:px-6 md:space-y-10 md:pb-16 md:pt-8 lg:px-10"
+        >
           {children}
         </main>
       </div>
 
       <Link
         href="/app/daily#log-today"
-        className="fixed bottom-6 right-5 z-30 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3.5 text-[14px] font-medium text-accent-foreground shadow-[var(--shadow-e3)] transition-transform duration-200 active:scale-95 sm:hidden"
+        className="fixed bottom-[max(1.5rem,calc(env(safe-area-inset-bottom)+0.5rem))] right-5 z-30 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3.5 text-[14px] font-medium text-accent-foreground shadow-[var(--shadow-e3)] transition-transform duration-200 active:scale-95 sm:hidden"
       >
         <Plus aria-hidden className="size-4" strokeWidth={2.25} />
         Quick add

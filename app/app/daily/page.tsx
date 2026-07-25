@@ -24,6 +24,12 @@ import {
   StreakCard,
   WeeklyProgress,
 } from "@/features/dashboard/panels";
+import {
+  EmptyState,
+  LoopIllustration,
+  SectionHeading,
+  buttonClass,
+} from "@/components/ui/kit";
 import { lifeScore } from "@/features/life-score/score";
 import { dailyCompletion, buildInsights } from "@/features/progress/compute";
 import { currentStreak, longestStreak } from "@/features/habits/streak";
@@ -344,23 +350,20 @@ export default async function DailyPage() {
         habitCount={daily.length}
       />
 
-      <div className="grid gap-8 md:gap-10 lg:grid-cols-12 [&>*]:min-w-0">
+      <div className="grid items-start gap-8 md:gap-10 lg:grid-cols-12 [&>*]:min-w-0">
         {daily.length === 0 ? (
           <section className="space-y-4 lg:col-span-7">
-            <h2 className="text-[17px] font-semibold tracking-tight">
-              Today&apos;s habits
-            </h2>
-            <div className="flex flex-col items-center gap-3 rounded-3xl bg-surface p-8 text-center shadow-[var(--shadow-e1)] ring-1 ring-border">
-              <p className="text-[14px] text-muted-foreground">
-                No habits yet — add your first to start the loop.
-              </p>
-              <Link
-                href="/app/settings/habits"
-                className="inline-flex h-11 items-center rounded-full bg-accent px-5 text-[14px] font-medium text-accent-foreground transition-all hover:brightness-110 active:scale-[0.97]"
-              >
-                Add your first habit
-              </Link>
-            </div>
+            <SectionHeading title="Today's habits" />
+            <EmptyState
+              illustration={<LoopIllustration />}
+              title="Start with one habit"
+              body="Habits are the loop everything else hangs off — tick one a day and Loopwell starts showing your streaks, weekly completion, and Life Score. Two minutes now, and tomorrow already has a shape."
+              action={
+                <Link href="/app/settings/habits" className={buttonClass("primary")}>
+                  Create your first habit
+                </Link>
+              }
+            />
           </section>
         ) : (
           <HabitList habits={daily} today={today} />
@@ -377,7 +380,7 @@ export default async function DailyPage() {
         />
       </div>
 
-      <div className="grid gap-8 md:gap-10 lg:grid-cols-12 [&>*]:min-w-0">
+      <div className="grid items-start gap-8 md:gap-10 lg:grid-cols-12 [&>*]:min-w-0">
         <WeeklyProgress days={weekDays} avgPct={avgPct} deltaPct={
           prevAvgPct === null ? null : avgPct - prevAvgPct
         } />
@@ -387,7 +390,7 @@ export default async function DailyPage() {
         </div>
       </div>
 
-      <div className="grid gap-8 md:gap-10 lg:grid-cols-12 [&>*]:min-w-0">
+      <div className="grid items-start gap-8 md:gap-10 lg:grid-cols-12 [&>*]:min-w-0">
         <StreakCard
           current={streakNow}
           best={streakBest}

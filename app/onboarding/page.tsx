@@ -21,15 +21,15 @@ export default async function OnboardingPage() {
   if (profile?.onboarding_completed_at) redirect("/app/daily");
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-[640px] flex-col px-4 py-8">
-      <div className="mb-8 flex items-center gap-2 text-lg font-bold tracking-tight text-ink">
+    <main className="mx-auto flex min-h-dvh w-full max-w-[640px] flex-col px-4 py-8 sm:px-6">
+      <div className="mb-8 flex items-center gap-3">
         <span
           aria-hidden
-          className="flex h-8 w-8 items-center justify-center rounded-field bg-gradient-to-br from-teal-400 to-teal-600 text-white shadow-rest-xs"
+          className="grid size-9 shrink-0 place-items-center rounded-xl bg-accent"
         >
-          L
+          <span className="size-3 rounded-full border-[2.5px] border-accent-foreground" />
         </span>
-        Loopwell
+        <span className="text-[17px] font-semibold tracking-tight">Loopwell</span>
       </div>
       <OnboardingWizard />
     </main>

@@ -5,8 +5,16 @@ import {
   dailyCompletion,
   type LogEntry,
 } from "@/features/progress/compute";
+import Link from "next/link";
 import { Heatmap, TrendLine, WeekBars } from "@/features/progress/charts";
 import { AwardIcon, LockIcon } from "@/components/ui/icons";
+import {
+  CARD_BASE,
+  EmptyState,
+  LoopIllustration,
+  PageHeader,
+  buttonClass,
+} from "@/components/ui/kit";
 import { kgToLbs } from "@/lib/health";
 
 export const metadata = { title: "Progress — Loopwell" };
@@ -102,31 +110,35 @@ export default async function ProgressPage() {
   );
   const unlockedSet = new Set((unlocked ?? []).map((u) => u.achievement_id));
 
-  const card =
-    "rounded-card bg-elevated ring-1 ring-border p-5 shadow-rest";
+  const card = `${CARD_BASE} p-6 sm:p-7`;
 
   return (
     <>
-      <h1 className="text-3xl font-bold tracking-tight text-ink">Progress</h1>
-      <p className="mt-1 text-sm text-ink-secondary">
-        Your trends across habits, health, and consistency.
-      </p>
+      <PageHeader
+        eyebrow="Last 30 days"
+        title="Progress"
+        subtitle="Your trends across habits, health, and consistency."
+      />
 
       {!hasAnyLog ? (
-        <div className={`mt-6 ${card} p-8 text-center`}>
-          <p className="text-sm text-ink-secondary">
-            Check back after a few days of logging — trends need a little
-            history.
-          </p>
-        </div>
+        <EmptyState
+          illustration={<LoopIllustration />}
+          title="Your trends start with day one"
+          body="Trends need a little history. Log today's habits and check back in a few days — this page then fills with your weekly completion, consistency heatmap, and achievements."
+          action={
+            <Link href="/app/daily" className={buttonClass("primary")}>
+              Log today
+            </Link>
+          }
+        />
       ) : (
-        <div className="mt-6 flex flex-col gap-6">
+        <div className="flex flex-col gap-6 md:gap-8">
           {insights.length > 0 ? (
             <section aria-label="Insights" className={card}>
-              <h2 className="mb-3 text-base font-semibold tracking-tight text-ink">Insights</h2>
-              <ul className="flex flex-col divide-y divide-[var(--lw-border)]">
+              <h2 className="mb-3 text-[15px] font-semibold tracking-tight">Insights</h2>
+              <ul className="flex flex-col divide-y divide-border">
                 {insights.map((line) => (
-                  <li key={line} className="py-2.5 text-sm text-ink">
+                  <li key={line} className="py-2.5 text-[14px] leading-relaxed">
                     {line}
                   </li>
                 ))}
@@ -136,18 +148,18 @@ export default async function ProgressPage() {
 
           <div className="grid grid-cols-1 items-start gap-6 sm:grid-cols-2">
             <section aria-label="Habit completion, last 7 days" className={card}>
-              <h2 className="mb-4 text-base font-semibold tracking-tight text-ink">This Week</h2>
+              <h2 className="mb-4 text-[15px] font-semibold tracking-tight">This week</h2>
               <WeekBars days={week} />
             </section>
 
             {weightPoints.length >= 2 ? (
               <section aria-label="Weight trend" className={card}>
-                <h2 className="mb-4 text-base font-semibold tracking-tight text-ink">Weight Trend</h2>
+                <h2 className="mb-4 text-[15px] font-semibold tracking-tight">Weight trend</h2>
                 <TrendLine
                   points={weightPoints}
                   ariaLabel={`Weight from ${weightPoints[0]} to ${weightPoints[weightPoints.length - 1]} ${imperial ? "lbs" : "kg"} over ${weightPoints.length} entries`}
                 />
-                <p className="tabular mt-2 text-sm text-ink-muted">
+                <p className="tabular mt-2 text-[13px] text-muted-foreground">
                   {weightPoints[0]} → {weightPoints[weightPoints.length - 1]}{" "}
                   {imperial ? "lbs" : "kg"}
                 </p>
@@ -156,34 +168,34 @@ export default async function ProgressPage() {
           </div>
 
           <section aria-label="Consistency heatmap" className={card}>
-            <h2 className="mb-4 text-base font-semibold tracking-tight text-ink">
-              Consistency Heatmap
+            <h2 className="mb-4 text-[15px] font-semibold tracking-tight">
+              Consistency
             </h2>
             <Heatmap days={heat} />
           </section>
 
           <section aria-label="Achievements" className={card}>
-            <h2 className="mb-4 text-base font-semibold tracking-tight text-ink">Achievements</h2>
-            <ul className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-3">
+            <h2 className="mb-4 text-[15px] font-semibold tracking-tight">Achievements</h2>
+            <ul className="grid grid-cols-[repeat(auto-fill,minmax(88px,1fr))] gap-4">
               {(achievements ?? []).map((a) => {
                 const isUnlocked = unlockedSet.has(a.id);
                 return (
                   <li
                     key={a.id}
                     title={a.description}
-                    className={`flex flex-col items-center gap-1.5 text-center ${isUnlocked ? "" : "opacity-45 grayscale"}`}
+                    className={`flex flex-col items-center gap-1.5 text-center ${isUnlocked ? "" : "opacity-45"}`}
                   >
                     <span
-                      className={`flex h-14 w-14 items-center justify-center rounded-full border-2 ${
+                      className={`grid size-14 place-items-center rounded-full transition-transform duration-200 ${
                         isUnlocked
-                          ? "border-teal-200 bg-teal-50 text-teal-600"
-                          : "border-hairline bg-sunken text-ink-muted"
+                          ? "bg-accent-soft text-accent ring-1 ring-accent-line hover:scale-105"
+                          : "bg-secondary text-muted-foreground ring-1 ring-border"
                       }`}
                       aria-hidden
                     >
                       {isUnlocked ? <AwardIcon size={26} /> : <LockIcon size={22} />}
                     </span>
-                    <span className="text-xs text-ink-secondary">{a.title}</span>
+                    <span className="text-[12px] text-muted-foreground">{a.title}</span>
                   </li>
                 );
               })}

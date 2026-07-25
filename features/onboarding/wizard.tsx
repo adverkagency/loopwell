@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { completeOnboarding } from "@/features/habits/actions";
 import { HABIT_TEMPLATES } from "@/features/habits/templates";
 import { CheckIcon, HabitIcon } from "@/components/ui/icons";
+import { buttonClass } from "@/components/ui/kit";
 
 /**
  * First-run Setup Wizard — target under 60 seconds:
@@ -53,7 +54,7 @@ export function OnboardingWizard() {
           <span
             key={n}
             className={`h-1 flex-1 rounded-full transition ${
-              n <= step ? "bg-primary" : "bg-hairline"
+              n <= step ? "bg-accent" : "bg-border"
             }`}
           />
         ))}
@@ -61,10 +62,10 @@ export function OnboardingWizard() {
 
       {step === 1 ? (
         <section aria-labelledby="onb-h1" className="flex flex-1 flex-col">
-          <h1 id="onb-h1" className="text-3xl font-bold tracking-tight text-ink">
+          <h1 id="onb-h1" className="text-[26px] font-medium leading-[1.15] tracking-[-0.015em] sm:text-[30px]">
             Pick 3–5 habits to start
           </h1>
-          <p className="mt-1 text-sm text-ink-secondary">
+          <p className="mt-1 text-[13px] text-muted-foreground">
             Tap the ones you want to track. No typing — you can add custom
             habits later.
           </p>
@@ -81,28 +82,28 @@ export function OnboardingWizard() {
                   type="button"
                   aria-pressed={selected}
                   onClick={() => togglePick(t.name)}
-                  className={`relative flex flex-col items-center gap-2 rounded-card border-2 bg-elevated px-3 py-5 text-center text-sm font-medium shadow-rest-xs transition hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0 active:scale-[0.97] ${
+                  className={`lift relative flex flex-col items-center gap-2 rounded-3xl px-3 py-5 text-center text-[14px] font-medium ring-1 active:scale-[0.97] ${
                     selected
-                      ? "border-teal-500 bg-teal-50 text-teal-700"
-                      : "border-hairline text-ink-secondary hover:border-teal-300"
+                      ? "bg-accent-soft text-accent ring-accent"
+                      : "bg-surface text-foreground shadow-[var(--shadow-e1)] ring-border"
                   }`}
                 >
                   {selected ? (
-                    <span className="absolute right-2 top-2 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-primary text-on-primary">
+                    <span className="check-pop absolute right-2 top-2 grid size-[18px] place-items-center rounded-full bg-accent text-accent-foreground">
                       <CheckIcon size={11} />
                     </span>
                   ) : null}
                   <HabitIcon
                     name={t.icon}
                     size={28}
-                    className={selected ? "text-teal-600" : "text-ink-muted"}
+                    className={selected ? "text-accent" : "text-muted-foreground"}
                   />
                   {t.name}
                 </button>
               );
             })}
           </div>
-          <p aria-live="polite" className="tabular sticky bottom-4 mt-8 text-center text-sm text-ink-muted">
+          <p aria-live="polite" className="tabular sticky bottom-4 mt-8 text-center text-[13px] text-muted-foreground">
             {picked.length} selected
             {picked.length < 3 ? " — pick at least 3" : ""}
             {picked.length === 5 ? " — that's the max to start" : ""}
@@ -112,7 +113,7 @@ export function OnboardingWizard() {
               type="button"
               disabled={picked.length < 3}
               onClick={() => setStep(2)}
-              className="flex min-h-11 items-center rounded-full bg-primary px-6 text-sm font-semibold text-on-primary shadow-rest-xs transition hover:bg-primary-hover disabled:opacity-45"
+              className={buttonClass("primary")}
             >
               Continue
             </button>
@@ -122,15 +123,15 @@ export function OnboardingWizard() {
 
       {step === 2 ? (
         <section aria-labelledby="onb-h2" className="flex flex-1 flex-col">
-          <h1 id="onb-h2" className="text-3xl font-bold tracking-tight text-ink">
+          <h1 id="onb-h2" className="text-[26px] font-medium leading-[1.15] tracking-[-0.015em] sm:text-[30px]">
             Set one goal{" "}
-            <span className="text-sm font-normal text-ink-muted">(optional)</span>
+            <span className="text-[14px] font-normal text-muted-foreground">(optional)</span>
           </h1>
-          <p className="mt-1 text-sm text-ink-secondary">
+          <p className="mt-1 text-[13px] text-muted-foreground">
             Goals arrive with the Goals tab in an upcoming update — you&apos;ll
             be able to add one there any time. Nothing to do here yet.
           </p>
-          <div className="mt-6 rounded-card bg-elevated ring-1 ring-border p-6 text-sm text-ink-secondary shadow-rest">
+          <div className="mt-6 rounded-3xl bg-surface ring-1 ring-border p-6 text-[13px] text-muted-foreground shadow-[var(--shadow-e1)]">
             Coming soon: one simple goal engine for anything you&apos;re working
             toward — weight, reading, savings, or something entirely your own.
           </div>
@@ -138,14 +139,14 @@ export function OnboardingWizard() {
             <button
               type="button"
               onClick={() => setStep(1)}
-              className="flex min-h-11 items-center rounded-full border border-hairline-strong px-6 text-sm font-semibold text-ink transition hover:bg-surface-hover"
+              className={buttonClass("ghost")}
             >
               Back
             </button>
             <button
               type="button"
               onClick={() => setStep(3)}
-              className="flex min-h-11 items-center rounded-full bg-primary px-6 text-sm font-semibold text-on-primary shadow-rest-xs transition hover:bg-primary-hover"
+              className={buttonClass("primary")}
             >
               Skip for now
             </button>
@@ -159,26 +160,26 @@ export function OnboardingWizard() {
             <div aria-hidden className="text-6xl">
               🎉
             </div>
-            <h1 id="onb-h3" className="mt-4 text-3xl font-bold tracking-tight text-ink">
+            <h1 id="onb-h3" className="mt-4 text-[26px] font-medium leading-[1.15] tracking-[-0.015em] sm:text-[30px]">
               You&apos;re all set
             </h1>
-            <p className="mt-2 text-sm text-ink-secondary">
+            <p className="mt-2 text-[13px] text-muted-foreground">
               We&apos;ll pre-check your first habit for today — your first win,
               already done.
             </p>
-            <div className="mt-6 flex items-center gap-3 rounded-card bg-elevated ring-1 ring-border px-4 py-3 text-left shadow-rest">
-              <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-primary" />
+            <div className="mt-6 flex items-center gap-3 rounded-3xl bg-surface ring-1 ring-border px-4 py-3 text-left shadow-[var(--shadow-e1)]">
+              <span aria-hidden className="size-2.5 rounded-full bg-accent" />
               <div className="flex-1">
-                <div className="text-sm font-semibold text-ink">{picked[0]}</div>
-                <div className="text-xs text-ink-muted">Your first habit</div>
+                <div className="text-[14px] font-semibold">{picked[0]}</div>
+                <div className="text-[12px] text-muted-foreground">Your first habit</div>
               </div>
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-success text-on-success">
+              <span className="check-pop grid size-10 place-items-center rounded-full bg-accent text-accent-foreground">
                 <CheckIcon size={16} />
               </span>
             </div>
           </div>
           {error ? (
-            <p role="alert" className="mt-4 text-center text-sm font-medium text-danger">
+            <p role="alert" className="mt-4 text-center text-[13px] font-medium text-danger">
               {error}
             </p>
           ) : null}
@@ -187,7 +188,7 @@ export function OnboardingWizard() {
               type="button"
               disabled={pending}
               onClick={finish}
-              className="flex min-h-11 w-full items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-on-primary shadow-rest-xs transition hover:bg-primary-hover disabled:opacity-45"
+              className={buttonClass("primary", "md", "w-full")}
             >
               {pending ? "Setting things up…" : "Go to your Daily page"}
             </button>

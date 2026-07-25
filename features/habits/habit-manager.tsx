@@ -9,6 +9,7 @@ import {
   type ActionState,
 } from "./actions";
 import { HabitIcon, PlusIcon } from "@/components/ui/icons";
+import { CARD_BASE, LoopIllustration, buttonClass } from "@/components/ui/kit";
 import type { HabitRow } from "@/lib/api-types/db";
 
 type ManagedHabit = Pick<
@@ -28,11 +29,11 @@ export function HabitManager({ habits }: { habits: ManagedHabit[] }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <section className="rounded-card bg-elevated ring-1 ring-border p-5 shadow-rest">
+      <section className={`${CARD_BASE} p-5 sm:p-6`}>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-base font-semibold tracking-tight text-ink">
+          <h2 className="text-[15px] font-semibold tracking-tight">
             Active habits{" "}
-            <span className="tabular text-sm font-normal text-ink-muted">
+            <span className="tabular text-[13px] font-normal text-muted-foreground">
               {active.length}
             </span>
           </h2>
@@ -42,7 +43,7 @@ export function HabitManager({ habits }: { habits: ManagedHabit[] }) {
               setAdding((v) => !v);
               setEditing(null);
             }}
-            className="flex min-h-9 items-center gap-1.5 rounded-full bg-coral-500 px-4 text-xs font-semibold text-[#2a1a08] transition hover:bg-coral-600"
+            className={buttonClass("primary", "sm")}
           >
             <PlusIcon size={14} /> New habit
           </button>
@@ -58,29 +59,45 @@ export function HabitManager({ habits }: { habits: ManagedHabit[] }) {
         ) : null}
 
         {active.length === 0 && !adding ? (
-          <p className="py-6 text-center text-sm text-ink-secondary">
-            No habits yet — add your first to start the loop.
-          </p>
+          <div className="flex flex-col items-center gap-4 py-6 text-center">
+            <LoopIllustration className="h-24" />
+            <div className="max-w-[38ch] space-y-1.5">
+              <p className="text-[15px] font-semibold tracking-tight">
+                No habits yet
+              </p>
+              <p className="text-[13px] leading-relaxed text-muted-foreground">
+                One habit is enough to start the loop — you can add more once it
+                sticks.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setAdding(true)}
+              className={buttonClass("primary")}
+            >
+              Create your first habit
+            </button>
+          </div>
         ) : null}
 
         <ul className="flex flex-col gap-2">
           {active.map((h, i) => (
-            <li key={h.id} className="rounded-control border border-hairline">
-              <div className="flex items-center gap-3 px-4 py-3">
+            <li key={h.id} className="rounded-2xl ring-1 ring-border transition-colors duration-200 hover:ring-border-strong/40">
+              <div className="flex flex-wrap items-center gap-3 px-4 py-3">
                 <span
                   aria-hidden
                   className="h-2.5 w-2.5 flex-none rounded-full"
                   style={{ background: h.color ?? "var(--lw-teal-500)" }}
                 />
-                <HabitIcon name={h.icon} size={18} className="flex-none text-ink-muted" />
+                <HabitIcon name={h.icon} size={18} className="flex-none text-muted-foreground" />
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-semibold text-ink">{h.name}</div>
-                  <div className="text-xs text-ink-muted">
+                  <div className="text-[14px] font-semibold">{h.name}</div>
+                  <div className="text-[12px] text-muted-foreground">
                     {h.frequency_count}×/{h.frequency_period}
                     {h.in_quick_log ? " · Quick Log" : ""}
                   </div>
                 </div>
-                <div className="flex flex-none items-center gap-1">
+                <div className="flex w-full items-center justify-end gap-1 sm:w-auto sm:flex-none">
                   <IconBtn
                     label={`Move ${h.name} up`}
                     disabled={i === 0}
@@ -101,21 +118,21 @@ export function HabitManager({ habits }: { habits: ManagedHabit[] }) {
                       setEditing(editing === h.id ? null : h.id);
                       setAdding(false);
                     }}
-                    className="flex min-h-9 items-center rounded-full border border-hairline-strong px-3 text-xs font-semibold text-ink transition hover:bg-surface-hover"
+                    className="inline-flex h-9 items-center gap-2 rounded-full bg-secondary px-3.5 text-[13px] font-medium text-secondary-foreground transition-all duration-200 hover:bg-accent-soft hover:text-accent active:scale-[0.97]"
                   >
                     {editing === h.id ? "Close" : "Edit"}
                   </button>
                   <button
                     type="button"
                     onClick={() => startTransition(() => void setHabitArchived(h.id, true))}
-                    className="flex min-h-9 items-center rounded-full px-3 text-xs font-semibold text-ink-muted transition hover:bg-surface-hover hover:text-ink"
+                    className={buttonClass("quiet", "sm")}
                   >
                     Archive
                   </button>
                 </div>
               </div>
               {editing === h.id ? (
-                <div className="border-t border-hairline px-4 py-4">
+                <div className="rise border-t border-border px-4 py-4">
                   <HabitForm
                     key={h.id}
                     habit={h}
@@ -131,15 +148,15 @@ export function HabitManager({ habits }: { habits: ManagedHabit[] }) {
       </section>
 
       {archived.length > 0 ? (
-        <section className="rounded-card bg-elevated ring-1 ring-border p-5 shadow-rest">
+        <section className={`${CARD_BASE} p-5 sm:p-6`}>
           <button
             type="button"
             onClick={() => setShowArchived((v) => !v)}
             aria-expanded={showArchived}
-            className="flex w-full items-center justify-between text-base font-semibold tracking-tight text-ink"
+            className="flex w-full items-center justify-between text-[15px] font-semibold tracking-tight"
           >
             Archived{" "}
-            <span className="tabular text-sm font-normal text-ink-muted">
+            <span className="tabular text-[13px] font-normal text-muted-foreground">
               {archived.length}
             </span>
           </button>
@@ -148,16 +165,16 @@ export function HabitManager({ habits }: { habits: ManagedHabit[] }) {
               {archived.map((h) => (
                 <li
                   key={h.id}
-                  className="flex items-center gap-3 rounded-control border border-hairline px-4 py-3 opacity-70"
+                  className="flex items-center gap-3 rounded-2xl px-4 py-3 ring-1 ring-border opacity-75 transition-opacity duration-200 hover:opacity-100"
                 >
-                  <HabitIcon name={h.icon} size={18} className="flex-none text-ink-muted" />
-                  <span className="flex-1 text-sm font-medium text-ink-secondary">
+                  <HabitIcon name={h.icon} size={18} className="flex-none text-muted-foreground" />
+                  <span className="flex-1 text-[13px] font-medium text-muted-foreground">
                     {h.name}
                   </span>
                   <button
                     type="button"
                     onClick={() => startTransition(() => void setHabitArchived(h.id, false))}
-                    className="flex min-h-9 items-center rounded-full border border-hairline-strong px-3 text-xs font-semibold text-ink transition hover:bg-surface-hover"
+                    className="inline-flex h-9 items-center gap-2 rounded-full bg-secondary px-3.5 text-[13px] font-medium text-secondary-foreground transition-all duration-200 hover:bg-accent-soft hover:text-accent active:scale-[0.97]"
                   >
                     Restore
                   </button>
@@ -188,7 +205,7 @@ function IconBtn({
       aria-label={label}
       disabled={disabled}
       onClick={onClick}
-      className="flex h-9 w-9 items-center justify-center rounded-full border border-hairline-strong text-sm text-ink-secondary transition hover:bg-surface-hover disabled:opacity-30"
+      className="grid size-9 place-items-center rounded-full text-[13px] text-muted-foreground transition-all duration-200 hover:bg-secondary hover:text-foreground active:scale-90 disabled:opacity-30 disabled:hover:bg-transparent"
     >
       {children}
     </button>
@@ -218,7 +235,7 @@ function HabitForm({
   return (
     <form action={formAction} className="mb-4 flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <label htmlFor="hb-name" className="text-sm font-medium text-ink-secondary">
+        <label htmlFor="hb-name" className="text-[13px] font-medium text-muted-foreground">
           Name
         </label>
         <input
@@ -228,12 +245,12 @@ function HabitForm({
           required
           maxLength={80}
           placeholder="e.g. Morning walk"
-          className="min-h-11 rounded-field border-[1.5px] border-hairline-strong bg-elevated px-3 text-base text-ink placeholder:text-ink-muted transition focus:border-teal-500 focus:shadow-focus-ring focus:outline-none"
+          className="h-11 w-full rounded-xl bg-secondary px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground ring-1 ring-border transition-all duration-200 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-ring/45"
         />
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div className="flex flex-col gap-2">
-          <label htmlFor="hb-count" className="text-sm font-medium text-ink-secondary">
+          <label htmlFor="hb-count" className="text-[13px] font-medium text-muted-foreground">
             How often
           </label>
           <input
@@ -243,36 +260,36 @@ function HabitForm({
             min={1}
             max={31}
             defaultValue={habit?.frequency_count ?? 7}
-            className="min-h-11 rounded-field border-[1.5px] border-hairline-strong bg-elevated px-3 text-base text-ink transition focus:border-teal-500 focus:shadow-focus-ring focus:outline-none"
+            className="h-11 w-full rounded-xl bg-secondary px-3.5 text-[14px] text-foreground ring-1 ring-border transition-all duration-200 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-ring/45"
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label htmlFor="hb-period" className="text-sm font-medium text-ink-secondary">
+          <label htmlFor="hb-period" className="text-[13px] font-medium text-muted-foreground">
             Per
           </label>
           <select
             id="hb-period"
             name="frequency_period"
             defaultValue={habit?.frequency_period ?? "week"}
-            className="min-h-11 rounded-field border-[1.5px] border-hairline-strong bg-elevated px-3 text-base text-ink transition focus:border-teal-500 focus:shadow-focus-ring focus:outline-none"
+            className="h-11 w-full rounded-xl bg-secondary px-3.5 text-[14px] text-foreground ring-1 ring-border transition-all duration-200 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-ring/45"
           >
             <option value="week">Week</option>
             <option value="month">Month</option>
           </select>
         </div>
       </div>
-      <label className="flex items-center gap-2 text-sm text-ink-secondary">
+      <label className="flex items-center gap-2 text-[13px] text-muted-foreground">
         <input
           type="checkbox"
           name="in_quick_log"
           defaultChecked={habit?.in_quick_log}
           disabled={quickLogFull}
-          className="h-4 w-4 accent-[var(--lw-teal-500)]"
+          className="size-4 accent-[var(--accent)]"
         />
         Show in Quick Log bar{quickLogFull ? " (bar is full — max 6)" : ""}
       </label>
       {state.error ? (
-        <p role="alert" className="text-sm font-medium text-danger">
+        <p role="alert" className="text-[13px] font-medium text-danger">
           {state.error}
         </p>
       ) : null}
@@ -280,14 +297,14 @@ function HabitForm({
         <button
           type="submit"
           disabled={pending}
-          className="flex min-h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary shadow-rest-xs transition hover:bg-primary-hover disabled:opacity-45"
+          className={buttonClass("primary")}
         >
           {pending ? "Saving…" : habit ? "Save changes" : "Add habit"}
         </button>
         <button
           type="button"
           onClick={onDone}
-          className="flex min-h-11 items-center rounded-full border border-hairline-strong px-5 text-sm font-semibold text-ink transition hover:bg-surface-hover"
+          className={buttonClass("ghost")}
         >
           Cancel
         </button>

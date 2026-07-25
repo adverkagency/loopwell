@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowRight, Infinity as InfinityIcon, Menu, X } from "lucide-react";
+import { ArrowRight, Menu, X } from "lucide-react";
 import { useState } from "react";
 
 const NAV = [
@@ -13,12 +13,17 @@ const NAV = [
   { href: "/about", label: "About" },
 ];
 
+/** Brand mark — same ring-in-a-square used by the app shell, so the logo
+ *  reads identically across the marketing site, auth, and the dashboard. */
 export function Wordmark({ className = "" }: { className?: string }) {
   return (
-    <Link href="/" className={`flex items-center gap-2 ${className}`}>
-      <div className="grid h-8 w-8 place-items-center rounded-lg bg-lp-ink text-lp-bg">
-        <InfinityIcon className="h-4 w-4" />
-      </div>
+    <Link href="/" className={`flex items-center gap-2.5 ${className}`}>
+      <span
+        aria-hidden
+        className="grid size-8 shrink-0 place-items-center rounded-xl bg-lp-primary"
+      >
+        <span className="size-2.5 rounded-full border-[2.5px] border-lp-primary-fg" />
+      </span>
       <span className="font-display text-xl text-lp-ink">Loopwell</span>
     </Link>
   );
@@ -55,7 +60,7 @@ export function SiteHeader() {
           </Link>
           <Link
             href="/register"
-            className="group inline-flex items-center gap-1.5 rounded-full bg-lp-ink px-4 py-2 text-sm font-medium text-lp-bg transition-all hover:bg-lp-ink/90"
+            className="group inline-flex min-h-11 items-center gap-1.5 rounded-full bg-lp-ink px-4 py-2 text-sm font-medium text-lp-bg transition-all hover:bg-lp-ink/90 active:scale-[0.97]"
           >
             Start free
             <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
@@ -64,7 +69,7 @@ export function SiteHeader() {
             onClick={() => setOpen((o) => !o)}
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
-            className="grid h-9 w-9 place-items-center rounded-full border border-lp-hairline text-lp-ink transition-colors hover:bg-lp-subtle md:hidden"
+            className="grid size-11 place-items-center rounded-full border border-lp-hairline text-lp-ink transition-colors hover:bg-lp-subtle md:hidden"
           >
             {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
@@ -78,7 +83,7 @@ export function SiteHeader() {
                 <Link
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className="block rounded-lg px-2 py-2.5 text-sm text-lp-muted transition-colors hover:bg-lp-subtle hover:text-lp-ink"
+                  className="flex min-h-11 items-center rounded-lg px-2 text-sm text-lp-muted transition-colors hover:bg-lp-subtle hover:text-lp-ink"
                 >
                   {item.label}
                 </Link>
@@ -137,26 +142,27 @@ export function SiteFooter() {
               A quieter way to track habits, health, and personal growth — built for
               the long game.
             </p>
-            <div className="mt-6 flex gap-2">
-              {["X", "IG", "IN", "GH"].map((s) => (
-                <a
-                  key={s}
-                  href="#"
-                  aria-label={`Loopwell on ${s}`}
-                  className="grid h-9 w-9 place-items-center rounded-full border border-lp-hairline text-xs text-lp-muted transition-colors hover:bg-lp-subtle hover:text-lp-ink"
-                >
-                  {s}
-                </a>
-              ))}
-            </div>
+            {/* No social placeholders — dead "#" links read as broken. Real
+                accounts get added here when they exist. */}
+            <Link
+              href="/contact"
+              className="mt-6 inline-flex items-center gap-1.5 text-sm text-lp-muted transition-colors hover:text-lp-ink"
+            >
+              Talk to us
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
           </div>
           {FOOTER_COLS.map((col) => (
             <div key={col.title}>
               <div className="text-xs font-semibold uppercase tracking-widest text-lp-ink">{col.title}</div>
-              <ul className="mt-4 space-y-2.5">
+              <ul className="mt-3 space-y-1">
                 {col.links.map((l) => (
                   <li key={l.href}>
-                    <Link href={l.href} className="text-sm text-lp-muted transition-colors hover:text-lp-ink">
+                    {/* -my-1.5/py-1.5: 44px touch target without changing the visual rhythm */}
+                    <Link
+                      href={l.href}
+                      className="-my-1.5 inline-flex min-h-11 items-center py-1.5 text-sm text-lp-muted transition-colors hover:text-lp-ink"
+                    >
                       {l.label}
                     </Link>
                   </li>

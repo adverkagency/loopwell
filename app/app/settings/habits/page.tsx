@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { HabitManager } from "@/features/habits/habit-manager";
+import { PageHeader } from "@/components/ui/kit";
 import type { HabitRow } from "@/lib/api-types/db";
 
 export const metadata = { title: "Habits — Settings — Loopwell" };
@@ -26,11 +27,12 @@ export default async function HabitsSettingsPage() {
 
   return (
     <>
-      <h1 className="text-3xl font-bold tracking-tight text-ink">Habits</h1>
-      <p className="mt-1 text-sm text-ink-secondary">
-        Add, edit, reorder, and archive — the Quick Log bar holds up to 6.
-      </p>
-      <div className="mt-6">
+      <PageHeader
+        eyebrow="Settings"
+        title="Habits"
+        subtitle="Add, edit, reorder, and archive — the Quick Log bar holds up to 6."
+      />
+      <div>
         <HabitManager habits={habits ?? []} />
       </div>
     </>

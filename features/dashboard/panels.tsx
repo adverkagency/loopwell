@@ -9,10 +9,7 @@ import {
   Utensils,
 } from "lucide-react";
 
-/* ---------------- shared card chrome ---------------- */
-
-const CARD =
-  "rounded-3xl bg-surface shadow-[var(--shadow-e1)] ring-1 ring-border";
+import { CARD_BASE as CARD, SectionHeading } from "@/components/ui/kit";
 
 function TileHead({
   icon: Icon,
@@ -43,7 +40,7 @@ function Tile({
   children?: React.ReactNode;
 }) {
   return (
-    <div className={`${CARD} p-4 transition-all duration-200 hover:shadow-[var(--shadow-e2)] sm:p-5`}>
+    <div className={`${CARD} lift p-4 sm:p-5`}>
       <TileHead icon={icon} label={label} />
       <p className="tabular mt-2 text-[20px] font-medium leading-tight tracking-tight">
         {value}
@@ -82,10 +79,8 @@ export function HealthOverview({
 
   return (
     <section className="space-y-4 lg:col-span-5">
-      <div className="flex items-baseline justify-between gap-4">
-        <h2 className="text-[17px] font-semibold tracking-tight">Health overview</h2>
-      </div>
-      <div className="grid grid-cols-2 gap-2.5">
+      <SectionHeading title="Health overview" />
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
         <Tile
           icon={Moon}
           label="Sleep"

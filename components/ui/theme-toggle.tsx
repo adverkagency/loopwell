@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { MoonIcon } from "@/components/ui/icons";
+import { Monitor, Moon, Sun } from "lucide-react";
 
 const KEY = "lw-theme";
 type Theme = "system" | "light" | "dark";
@@ -51,15 +51,17 @@ export function ThemeToggle() {
         ? "Theme: light — switch to dark"
         : "Theme: dark — switch to system";
 
+  const Icon = theme === "system" ? Monitor : theme === "light" ? Sun : Moon;
+
   return (
     <button
       type="button"
       onClick={cycle}
       aria-label={label}
       title={label}
-      className="flex h-10 w-10 items-center justify-center rounded-full border border-hairline bg-elevated text-ink-secondary transition hover:border-teal-200 hover:bg-teal-50 hover:text-teal-700"
+      className="grid size-11 place-items-center rounded-xl text-muted-foreground transition-colors duration-200 hover:bg-secondary hover:text-foreground active:scale-95"
     >
-      <MoonIcon size={18} />
+      <Icon aria-hidden className="size-[18px]" strokeWidth={1.75} />
       <span className="sr-only">{label}</span>
     </button>
   );
