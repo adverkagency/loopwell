@@ -7,7 +7,12 @@ export default function ResetPasswordPage() {
   return (
     <AuthForm
       action={resetPassword}
-      title="Set a new password"
+      eyebrow="Almost there"
+      title={
+        <>
+          Set a <em className="italic text-lp-primary">new password</em>.
+        </>
+      }
       subtitle="Choose something strong you haven't used before."
       submitLabel="Update password"
     >

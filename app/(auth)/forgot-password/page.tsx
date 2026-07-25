@@ -8,12 +8,17 @@ export default function ForgotPasswordPage() {
   return (
     <AuthForm
       action={forgotPassword}
-      title="Forgot your password?"
-      subtitle="Enter your email and we'll send a reset link."
+      eyebrow="Account recovery"
+      title={
+        <>
+          Forgot your <em className="italic text-lp-primary">password</em>?
+        </>
+      }
+      subtitle="Enter your email and we'll send a reset link within a minute."
       submitLabel="Send reset link"
       footer={
-        <Link href="/login" className="font-semibold text-teal-600 hover:text-teal-700">
-          Back to log in
+        <Link href="/login" className="font-medium text-lp-ink underline underline-offset-4">
+          ← Back to sign in
         </Link>
       }
     >
