@@ -28,7 +28,7 @@ export function HabitManager({ habits }: { habits: ManagedHabit[] }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <section className="rounded-card border border-hairline bg-elevated p-5 shadow-rest">
+      <section className="rounded-card bg-elevated ring-1 ring-border p-5 shadow-rest">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-base font-semibold tracking-tight text-ink">
             Active habits{" "}
@@ -131,7 +131,7 @@ export function HabitManager({ habits }: { habits: ManagedHabit[] }) {
       </section>
 
       {archived.length > 0 ? (
-        <section className="rounded-card border border-hairline bg-elevated p-5 shadow-rest">
+        <section className="rounded-card bg-elevated ring-1 ring-border p-5 shadow-rest">
           <button
             type="button"
             onClick={() => setShowArchived((v) => !v)}

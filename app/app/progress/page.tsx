@@ -103,7 +103,7 @@ export default async function ProgressPage() {
   const unlockedSet = new Set((unlocked ?? []).map((u) => u.achievement_id));
 
   const card =
-    "rounded-card border border-hairline bg-elevated p-5 shadow-rest";
+    "rounded-card bg-elevated ring-1 ring-border p-5 shadow-rest";
 
   return (
     <>

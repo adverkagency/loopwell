@@ -1,16 +1,12 @@
 "use client";
 
 import { useOptimistic, useTransition, useState } from "react";
+import Link from "next/link";
+import { Check, CircleDashed, Flame, SkipForward } from "lucide-react";
 import { setHabitState } from "./actions";
 import { useHydrated } from "@/lib/use-hydrated";
 import { currentStreak, type HabitState } from "./streak";
-import {
-  CheckIcon,
-  FlameIcon,
-  HalfIcon,
-  HabitIcon,
-  XIcon,
-} from "@/components/ui/icons";
+import { HabitIcon } from "@/components/ui/icons";
 
 export type DailyHabit = {
   id: string;
@@ -25,9 +21,16 @@ export type DailyHabit = {
 
 type Optimistic = Record<string, HabitState | null>;
 
+const META: Record<HabitState, string> = {
+  complete: "Complete",
+  partial: "Partial — counts, streak holds",
+  skip: "Skipped — streak holds",
+};
+
 /**
  * The core loop: Quick Log chips + tri-state checklist, optimistic per the
  * UX spec (~100ms local feedback; failed sync rolls back with a message).
+ * Complete is the one-tap circle; Partial and Skip stay available but quiet.
  */
 export function HabitList({
   habits,
@@ -63,142 +66,159 @@ export function HabitList({
   }
 
   const quickLog = habits.filter((h) => h.in_quick_log).slice(0, 6);
-  const done = habits.filter((h) => stateOf(h) !== null).length;
+  const done = habits.filter((h) => stateOf(h) === "complete").length;
 
   return (
-    <div className="flex flex-col gap-6">
+    <section aria-label="Today's habits" className="space-y-4 lg:col-span-7">
+      <div className="flex items-baseline justify-between gap-4">
+        <h2 className="text-[17px] font-semibold tracking-tight">
+          Today&apos;s habits
+        </h2>
+        <span className="tabular text-[13px] text-muted-foreground">
+          {done} of {habits.length} done ·{" "}
+          <Link
+            href="/app/settings/habits"
+            className="font-medium text-accent transition-opacity hover:opacity-70"
+          >
+            Manage
+          </Link>
+        </span>
+      </div>
+
       {error ? (
-        <p role="alert" className="rounded-field bg-danger/10 px-3 py-2 text-sm font-medium text-danger">
+        <p
+          role="alert"
+          className="rounded-2xl bg-danger/10 px-4 py-2.5 text-[13px] font-medium text-danger"
+        >
           {error}
         </p>
       ) : null}
 
       {quickLog.length > 0 ? (
-        <section
+        <div
+          role="group"
           aria-label="Quick log"
-          className="rounded-card border border-hairline bg-elevated p-5 shadow-rest"
+          className="no-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1 pb-1"
         >
-          <h2 className="mb-4 text-base font-semibold tracking-tight text-ink">Quick Log</h2>
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            {quickLog.map((h) => {
-              const pressed = stateOf(h) === "complete";
-              return (
-                <button
-                  key={h.id}
-                  type="button"
-                  aria-pressed={pressed}
-                  disabled={!hydrated}
-                  onClick={() => toggle(h, "complete")}
-                  className={`flex min-h-11 min-w-[84px] flex-none flex-col items-center gap-2 rounded-control border-[1.5px] px-4 py-3 text-xs font-medium transition active:scale-[0.96] disabled:cursor-wait disabled:opacity-60 ${
-                    pressed
-                      ? "border-teal-400 bg-teal-50 text-teal-700"
-                      : "border-hairline bg-elevated text-ink-secondary hover:border-teal-400"
-                  }`}
-                >
-                  <HabitIcon name={h.icon} size={24} className={pressed ? "text-teal-600" : "text-ink-muted"} />
-                  {h.name}
-                </button>
-              );
-            })}
-          </div>
-        </section>
+          {quickLog.map((h) => {
+            const pressed = stateOf(h) === "complete";
+            return (
+              <button
+                key={h.id}
+                type="button"
+                aria-pressed={pressed}
+                disabled={!hydrated}
+                onClick={() => toggle(h, "complete")}
+                className={`inline-flex h-10 flex-none items-center gap-2 rounded-full px-3.5 text-[13px] font-medium transition-all duration-200 active:scale-[0.97] disabled:cursor-wait disabled:opacity-60 ${
+                  pressed
+                    ? "bg-accent text-accent-foreground"
+                    : "bg-secondary text-secondary-foreground hover:bg-accent-soft hover:text-accent"
+                }`}
+              >
+                <HabitIcon name={h.icon} size={16} />
+                {h.name}
+              </button>
+            );
+          })}
+        </div>
       ) : null}
 
-      <section
-        aria-label="Today's habits"
-        className="rounded-card border border-hairline bg-elevated p-5 shadow-rest"
-      >
-        <h2 className="mb-4 flex items-center justify-between text-base font-semibold tracking-tight text-ink">
-          Today&apos;s Habits
-          <span className="tabular text-sm font-normal text-ink-muted">
-            {done}/{habits.length}
-          </span>
-        </h2>
-        <ul className="flex flex-col gap-2">
-          {habits.map((h) => {
-            const logs = new Map(h.logs);
-            const opt = stateOf(h);
-            if (opt === null) logs.delete(today);
-            else if (opt) logs.set(today, opt);
-            const streak = currentStreak(logs, today);
-            const state = stateOf(h);
+      <ul className="space-y-2.5">
+        {habits.map((h) => {
+          const logs = new Map(h.logs);
+          const state = stateOf(h);
+          if (state === null) logs.delete(today);
+          else logs.set(today, state);
+          const streak = currentStreak(logs, today);
+          const complete = state === "complete";
 
-            return (
-              <li
-                key={h.id}
-                className="flex items-center gap-3 rounded-control border border-hairline bg-elevated px-4 py-3 transition hover:border-hairline-strong hover:bg-surface-hover"
+          return (
+            <li key={h.id}>
+              <div
+                className={`group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 rounded-3xl p-4 ring-1 transition-all duration-200 hover:shadow-[var(--shadow-e2)] sm:p-5 ${
+                  complete
+                    ? "bg-accent-soft/60 ring-accent-line/60"
+                    : "bg-surface shadow-[var(--shadow-e1)] ring-border"
+                }`}
               >
-                <span
-                  aria-hidden
-                  className="h-2.5 w-2.5 flex-none rounded-full"
-                  style={{ background: h.color ?? "var(--lw-teal-500)" }}
-                />
-                <div className="min-w-0 flex-1">
-                  <div className="text-sm font-semibold text-ink">{h.name}</div>
-                  <div className="mt-0.5 flex items-center gap-1 text-xs text-ink-muted">
-                    {streak > 0 ? (
-                      <>
-                        <FlameIcon size={13} className="text-coral-600" />
-                        <span className="tabular">{streak}-day streak</span>
-                      </>
-                    ) : (
-                      "No streak yet"
-                    )}
-                  </div>
-                </div>
-                <div
-                  role="group"
-                  aria-label={`${h.name} status`}
-                  className="flex flex-none gap-2"
-                >
-                  <StateButton
-                    label="Mark complete"
-                    active={state === "complete"}
-                    activeCls="bg-success border-success text-on-success"
+                <div className="flex min-w-0 items-center gap-4">
+                  <button
+                    type="button"
+                    role="checkbox"
+                    aria-checked={complete}
+                    aria-label={`${h.name} — mark complete`}
                     disabled={!hydrated}
                     onClick={() => toggle(h, "complete")}
+                    className={`grid size-6 shrink-0 place-items-center rounded-full border transition-all duration-200 active:scale-90 disabled:cursor-wait ${
+                      complete
+                        ? "border-accent bg-accent"
+                        : "border-border-strong group-hover:border-accent"
+                    }`}
                   >
-                    <CheckIcon size={16} />
-                  </StateButton>
+                    <Check
+                      aria-hidden
+                      strokeWidth={2.75}
+                      className={`size-3.5 text-accent-foreground transition-opacity duration-200 ${
+                        complete ? "opacity-100" : "opacity-0"
+                      }`}
+                    />
+                  </button>
+                  <div className="min-w-0">
+                    <p
+                      className={`truncate text-[14px] font-medium transition-colors ${
+                        complete ? "text-accent" : "text-foreground"
+                      }`}
+                    >
+                      {h.name}
+                    </p>
+                    <p className="truncate text-[12px] text-muted-foreground">
+                      {state ? META[state] : "Not logged yet"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex shrink-0 items-center gap-1.5">
                   <StateButton
-                    label="Mark partial"
+                    label={`${h.name} — mark partial`}
                     active={state === "partial"}
-                    activeCls="bg-partial border-partial text-[#3a2c05]"
                     disabled={!hydrated}
                     onClick={() => toggle(h, "partial")}
                   >
-                    <HalfIcon size={16} />
+                    <CircleDashed aria-hidden className="size-4" />
                   </StateButton>
                   <StateButton
-                    label="Mark skipped"
+                    label={`${h.name} — mark skipped`}
                     active={state === "skip"}
-                    activeCls="bg-skip border-skip text-[#3b382e]"
                     disabled={!hydrated}
                     onClick={() => toggle(h, "skip")}
                   >
-                    <XIcon size={16} />
+                    <SkipForward aria-hidden className="size-4" />
                   </StateButton>
+                  {streak > 0 ? (
+                    <span className="tabular ml-1 inline-flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 text-[12px] font-medium text-secondary-foreground">
+                      <Flame aria-hidden className="size-3.5 text-accent" />
+                      {streak}d
+                    </span>
+                  ) : null}
                 </div>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
-    </div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
   );
 }
 
 function StateButton({
   label,
   active,
-  activeCls,
   disabled,
   onClick,
   children,
 }: {
   label: string;
   active: boolean;
-  activeCls: string;
   disabled?: boolean;
   onClick: () => void;
   children: React.ReactNode;
@@ -211,10 +231,10 @@ function StateButton({
       aria-pressed={active}
       disabled={disabled}
       onClick={onClick}
-      className={`flex h-10 w-10 items-center justify-center rounded-full border-[1.5px] transition active:scale-90 disabled:cursor-wait disabled:opacity-60 ${
+      className={`grid size-9 place-items-center rounded-full transition-all duration-200 active:scale-90 disabled:cursor-wait disabled:opacity-60 ${
         active
-          ? activeCls
-          : "border-hairline-strong bg-elevated text-ink-muted hover:border-ink-muted hover:text-ink-secondary"
+          ? "bg-accent text-accent-foreground"
+          : "text-muted-foreground hover:bg-secondary hover:text-foreground"
       }`}
     >
       {children}

@@ -9,17 +9,17 @@
    ========================================================= */
 
 :root {
-  /* Neutrals */
-  --lw-bg: #faf8f4;              /* Warm Paper */
-  --lw-bg-elevated: #ffffff;     /* Card White */
-  --lw-bg-sunken: #f1ede4;       /* Sunken Sand */
-  --lw-surface-hover: #f4f0e7;
-  --lw-border: #e7e0d3;          /* Hairline */
-  --lw-border-strong: #98907c;   /* ≥3:1 vs paper/card — input + chip boundaries */
-  --lw-ink: #22261e;
-  --lw-ink-secondary: #565b4e;
-  --lw-ink-muted: #676c5d;       /* ≥4.5:1 on paper, card, and sunken */
-  --lw-ink-inverse: #fbfaf6;
+  /* Neutrals — cool paper, quiet greens (2026 dashboard refresh) */
+  --lw-bg: oklch(98.2% 0.004 120);   /* Canvas */
+  --lw-bg-elevated: oklch(100% 0 0); /* Surface */
+  --lw-bg-sunken: oklch(96.2% 0.005 120);
+  --lw-surface-hover: oklch(96.2% 0.005 120);
+  --lw-border: oklch(92.5% 0.005 120);
+  --lw-border-strong: oklch(62% 0.012 140); /* ≥3:1 vs surface — inputs, chips, unchecked marks */
+  --lw-ink: oklch(21% 0.012 160);
+  --lw-ink-secondary: oklch(38% 0.014 160);
+  --lw-ink-muted: oklch(50.8% 0.014 160); /* ≥4.5:1 on canvas + surface */
+  --lw-ink-inverse: oklch(99% 0 0);
 
   /* Filled-control pairs — bg + guaranteed-AA text on it */
   --lw-primary: var(--lw-teal-600);
@@ -27,17 +27,17 @@
   --lw-on-primary: #ffffff;
   --lw-on-success: #ffffff;
 
-  /* Primary — Loopwell Teal */
-  --lw-teal-50: #eef8f6;
-  --lw-teal-100: #d3ede8;
-  --lw-teal-200: #a7dbd2;
-  --lw-teal-300: #74c3b6;
-  --lw-teal-400: #45a897;
-  --lw-teal-500: #2f8f7e;
-  --lw-teal-600: #257566;
-  --lw-teal-700: #1d5c51;
-  --lw-teal-800: #16453d;
-  --lw-teal-900: #0f2e29;
+  /* Primary — Loopwell Green (deep, low-chroma; one voice) */
+  --lw-teal-50: oklch(97.6% 0.008 152);
+  --lw-teal-100: oklch(95.8% 0.014 152);  /* accent-soft */
+  --lw-teal-200: oklch(86% 0.03 152);     /* accent-line */
+  --lw-teal-300: oklch(74% 0.042 152);
+  --lw-teal-400: oklch(58% 0.052 152);
+  --lw-teal-500: oklch(44% 0.048 152);    /* accent */
+  --lw-teal-600: oklch(38% 0.045 152);
+  --lw-teal-700: oklch(31% 0.04 152);
+  --lw-teal-800: oklch(26% 0.035 152);
+  --lw-teal-900: oklch(20% 0.03 152);
 
   /* Accent — Streak Coral (One Flame Rule) */
   --lw-coral-300: #ffd0a3;
@@ -55,10 +55,10 @@
   --lw-skip: #b3ad9c;            /* Skip Stone — dark ink icons only */
 
   /* Elevation (Reactive Lift Rule) — warm-tinted */
-  --lw-shadow-xs: 0 1px 2px rgba(30, 34, 26, 0.05);
-  --lw-shadow-sm: 0 1px 3px rgba(30, 34, 26, 0.06), 0 1px 2px rgba(30, 34, 26, 0.04);
-  --lw-shadow-md: 0 6px 16px -4px rgba(30, 34, 26, 0.1), 0 2px 6px -2px rgba(30, 34, 26, 0.06);
-  --lw-shadow-lg: 0 18px 44px -10px rgba(30, 34, 26, 0.18), 0 6px 14px -6px rgba(30, 34, 26, 0.09);
+  --lw-shadow-xs: 0 1px 2px oklch(30% 0.02 150 / 0.04);
+  --lw-shadow-sm: 0 1px 2px oklch(30% 0.02 150 / 0.04);
+  --lw-shadow-md: 0 1px 2px oklch(30% 0.02 150 / 0.04), 0 6px 16px -8px oklch(30% 0.02 150 / 0.1);
+  --lw-shadow-lg: 0 1px 2px oklch(30% 0.02 150 / 0.05), 0 18px 40px -20px oklch(30% 0.02 150 / 0.18);
   --lw-shadow-focus: 0 0 0 3px color-mix(in srgb, var(--lw-teal-500) 22%, transparent);
 
   color-scheme: light;
@@ -83,6 +83,11 @@
   --lw-on-primary: #0e211d;
   --lw-on-success: #0e211d;
 
+  --lw-teal-50: #16241f;
+  --lw-teal-100: #1b2f29;   /* accent-soft */
+  --lw-teal-200: #2c4a42;   /* accent-line */
+  --lw-teal-300: #3e6d61;
+  --lw-teal-400: #4fb3a0;
   --lw-teal-500: #4fb3a0;
   --lw-teal-600: #3f9987;
   --lw-coral-500: #ffab5c;
@@ -118,6 +123,11 @@
     --lw-primary-hover: #66c7b4;
     --lw-on-primary: #0e211d;
     --lw-on-success: #0e211d;
+    --lw-teal-50: #16241f;
+    --lw-teal-100: #1b2f29;
+    --lw-teal-200: #2c4a42;
+    --lw-teal-300: #3e6d61;
+    --lw-teal-400: #4fb3a0;
     --lw-teal-500: #4fb3a0;
     --lw-teal-600: #3f9987;
     --lw-coral-500: #ffab5c;
@@ -135,9 +145,47 @@
   }
 }
 
+/* Dashboard alias layer — the shell/dashboard markup speaks in these names
+   (canvas/surface/accent/…); they resolve to the --lw-* tokens above so a
+   single palette drives both the old cards and the new dashboard. */
+:root {
+  --canvas: var(--lw-bg);
+  --surface: var(--lw-bg-elevated);
+  --background: var(--lw-bg);
+  --foreground: var(--lw-ink);
+  --muted-foreground: var(--lw-ink-muted);
+  --secondary: var(--lw-bg-sunken);
+  --secondary-foreground: var(--lw-ink-secondary);
+  --accent: var(--lw-teal-500);
+  --accent-foreground: var(--lw-on-primary);
+  --accent-soft: var(--lw-teal-100);
+  --accent-line: var(--lw-teal-200);
+
+  --shadow-e1: var(--lw-shadow-xs);
+  --shadow-e2: var(--lw-shadow-md);
+  --shadow-e3: var(--lw-shadow-lg);
+  --ease-calm: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
 /* Tailwind theme — utilities generated from the tokens above.
    e.g. bg-paper, text-ink, bg-teal-500, rounded-card, shadow-lift */
 @theme inline {
+  /* Dashboard aliases */
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-line: var(--accent-line);
+  --color-border: var(--lw-border);
+  --color-border-strong: var(--lw-border-strong);
+  --color-ring: var(--accent);
+
   --color-paper: var(--lw-bg);
   --color-elevated: var(--lw-bg-elevated);
   --color-sunken: var(--lw-bg-sunken);
@@ -178,11 +226,11 @@
   --color-partial: var(--lw-partial);
   --color-skip: var(--lw-skip);
 
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: var(--font-instrument), "Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  --radius-field: 8px;    /* inputs, small buttons */
-  --radius-control: 14px; /* chips, habit rows */
-  --radius-card: 20px;    /* cards, modals */
+  --radius-field: 10px;   /* inputs, small buttons */
+  --radius-control: 16px; /* chips, habit rows */
+  --radius-card: 24px;    /* cards, modals */
 
   --shadow-rest-xs: var(--lw-shadow-xs);
   --shadow-rest: var(--lw-shadow-sm);
@@ -206,7 +254,8 @@ html {
 body {
   background: var(--lw-bg);
   color: var(--lw-ink);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-instrument), "Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-feature-settings: "cv11", "ss01";
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -221,6 +270,30 @@ h1, h2, h3 { text-wrap: balance; }
   outline: 2px solid var(--lw-teal-500);
   outline-offset: 2px;
   border-radius: 8px;
+}
+
+/* ---- Dashboard shell utilities ---- */
+.glass-header {
+  background-color: color-mix(in oklab, var(--surface) 82%, transparent);
+  backdrop-filter: blur(20px) saturate(150%);
+}
+
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+@keyframes lw-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+.rise { animation: lw-rise 0.55s var(--ease-calm) both; }
+
+@keyframes lw-grow-bar {
+  from { transform: scaleY(0); opacity: 0; }
+  to { transform: scaleY(1); opacity: 1; }
+}
+.grow-bar {
+  transform-origin: center bottom;
+  animation: lw-grow-bar 0.7s var(--ease-calm) both;
 }
 
 @media (prefers-reduced-motion: reduce) {

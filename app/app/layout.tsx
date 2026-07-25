@@ -1,8 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { AppNav } from "@/components/layout/app-nav";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { logout } from "@/app/(auth)/actions";
+import { AppShell } from "@/components/layout/app-shell";
+import { safeTimezone } from "@/lib/dates";
 
 /** Authenticated app shell — proxy already gates, this is defense in depth + user context. */
 export default async function AppLayout({
@@ -20,44 +19,46 @@ export default async function AppLayout({
   // Partially-onboarded users never land on an empty Daily (IA §16)
   const { data: profile } = await supabase
     .from("profiles")
-    .select("onboarding_completed_at")
+    .select("onboarding_completed_at, display_name, timezone")
     .eq("id", user.id)
     .single();
   if (!profile?.onboarding_completed_at) redirect("/onboarding");
 
-  return (
-    <div className="flex min-h-dvh flex-col md:flex-row">
-      <AppNav />
-      <div className="min-w-0 flex-1">
-        <header className="sticky top-0 z-30 flex items-center justify-between border-b border-hairline bg-paper/80 px-4 py-3 backdrop-blur-md">
-          <span className="flex items-center gap-2 text-lg font-bold tracking-tight text-ink md:hidden">
-            <span
-              aria-hidden
-              className="flex h-8 w-8 items-center justify-center rounded-field bg-gradient-to-br from-teal-400 to-teal-600 text-white shadow-rest-xs"
-            >
-              L
-            </span>
-            Loopwell
-          </span>
-          <span className="hidden text-sm text-ink-secondary md:inline">
-            {user.email}
-          </span>
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <form action={logout}>
-              <button
-                type="submit"
-                className="flex min-h-9 items-center rounded-full border border-hairline-strong px-4 text-xs font-semibold text-ink transition hover:bg-surface-hover"
-              >
-                Log out
-              </button>
-            </form>
-          </div>
-        </header>
-        <main className="mx-auto w-full max-w-[940px] px-4 pb-[100px] pt-4 sm:px-6 sm:pt-6 md:pb-8 lg:px-8 lg:pt-8">
-          {children}
-        </main>
-      </div>
-    </div>
+  const tz = safeTimezone(profile?.timezone as string | undefined);
+  const name = (profile?.display_name as string | null) ?? null;
+
+  const hour = Number(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: tz,
+      hour: "numeric",
+      hour12: false,
+    }).format(new Date())
   );
+  const partOfDay =
+    hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+
+  const dateLabel = new Intl.DateTimeFormat("en-US", {
+    timeZone: tz,
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  }).format(new Date());
+
+  return (
+    <AppShell
+      greeting={`${partOfDay}${name ? `, ${name}` : ""}`}
+      dateLabel={dateLabel}
+      initials={initialsOf(name, user.email ?? "")}
+      email={user.email ?? ""}
+    >
+      {children}
+    </AppShell>
+  );
+}
+
+function initialsOf(name: string | null, email: string) {
+  const source = name?.trim() || email.split("@")[0] || "L";
+  const parts = source.split(/[\s._-]+/).filter(Boolean);
+  const letters = parts.length > 1 ? parts[0][0] + parts[1][0] : source.slice(0, 2);
+  return letters.toUpperCase();
 }

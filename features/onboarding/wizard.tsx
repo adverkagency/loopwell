@@ -130,7 +130,7 @@ export function OnboardingWizard() {
             Goals arrive with the Goals tab in an upcoming update — you&apos;ll
             be able to add one there any time. Nothing to do here yet.
           </p>
-          <div className="mt-6 rounded-card border border-hairline bg-elevated p-6 text-sm text-ink-secondary shadow-rest">
+          <div className="mt-6 rounded-card bg-elevated ring-1 ring-border p-6 text-sm text-ink-secondary shadow-rest">
             Coming soon: one simple goal engine for anything you&apos;re working
             toward — weight, reading, savings, or something entirely your own.
           </div>
@@ -166,7 +166,7 @@ export function OnboardingWizard() {
               We&apos;ll pre-check your first habit for today — your first win,
               already done.
             </p>
-            <div className="mt-6 flex items-center gap-3 rounded-card border border-hairline bg-elevated px-4 py-3 text-left shadow-rest">
+            <div className="mt-6 flex items-center gap-3 rounded-card bg-elevated ring-1 ring-border px-4 py-3 text-left shadow-rest">
               <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-primary" />
               <div className="flex-1">
                 <div className="text-sm font-semibold text-ink">{picked[0]}</div>

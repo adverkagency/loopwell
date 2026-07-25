@@ -23,7 +23,7 @@ function ModuleCard({
   children: React.ReactNode;
 }) {
   return (
-    <details className="group overflow-hidden rounded-card border border-hairline bg-elevated shadow-rest">
+    <details className="group overflow-hidden rounded-card bg-elevated ring-1 ring-border shadow-rest">
       <summary className="flex min-h-11 cursor-pointer select-none items-center gap-3 p-5 transition hover:bg-surface-hover [&::-webkit-details-marker]:hidden">
         <h2 className="text-base font-semibold tracking-tight text-ink">{title}</h2>
         <span className="tabular flex-1 text-right text-sm text-ink-muted group-open:invisible">

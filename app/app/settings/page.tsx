@@ -26,7 +26,7 @@ export default async function SettingsPage() {
       <div className="mt-6 flex flex-col gap-2">
         <Link
           href="/app/settings/habits"
-          className="flex items-center justify-between rounded-card border border-hairline bg-elevated px-5 py-4 text-sm font-semibold text-ink shadow-rest transition hover:-translate-y-0.5 hover:shadow-lift"
+          className="flex items-center justify-between rounded-card bg-elevated ring-1 ring-border px-5 py-4 text-sm font-semibold text-ink shadow-rest transition hover:-translate-y-0.5 hover:shadow-lift"
         >
           Habits
           <span className="text-ink-muted" aria-hidden>
@@ -35,7 +35,7 @@ export default async function SettingsPage() {
         </Link>
         <WeightToggle enabled={profile?.weight_module_enabled !== false} />
 
-        <div className="rounded-card border border-hairline bg-elevated px-5 py-4 shadow-rest">
+        <div className="rounded-card bg-elevated ring-1 ring-border px-5 py-4 shadow-rest">
           <h2 className="text-sm font-semibold text-ink">Your data</h2>
           <p className="mt-1 text-xs text-ink-muted">
             Everything you&apos;ve logged, in one CSV — yours to keep. This is
@@ -50,7 +50,7 @@ export default async function SettingsPage() {
           </a>
         </div>
 
-        <div className="rounded-card border border-hairline bg-elevated px-5 py-4 shadow-rest opacity-80">
+        <div className="rounded-card bg-elevated ring-1 ring-border px-5 py-4 shadow-rest opacity-80">
           <h2 className="text-sm font-semibold text-ink">Notifications</h2>
           <p className="mt-1 text-xs text-ink-muted">
             Push and email reminders arrive once the Firebase (FCM) and Resend

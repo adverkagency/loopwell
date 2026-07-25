@@ -44,7 +44,7 @@ export function WaterCard({
   return (
     <section
       aria-label="Water"
-      className="rounded-card border border-hairline bg-elevated p-5 shadow-rest"
+      className="rounded-card bg-elevated ring-1 ring-border p-5 shadow-rest"
     >
       <h2 className="mb-4 text-base font-semibold tracking-tight text-ink">Water</h2>
       <div className="flex items-center gap-4">
@@ -123,7 +123,7 @@ export function WeightCard({
   return (
     <section
       aria-label="Weight"
-      className="rounded-card border border-hairline bg-elevated p-5 shadow-rest"
+      className="rounded-card bg-elevated ring-1 ring-border p-5 shadow-rest"
     >
       <h2 className="mb-4 text-base font-semibold tracking-tight text-ink">Weight</h2>
       <div className="flex flex-col gap-2">
@@ -193,7 +193,7 @@ export function SleepCard({
   return (
     <section
       aria-label="Sleep"
-      className="rounded-card border border-hairline bg-elevated p-5 shadow-rest"
+      className="rounded-card bg-elevated ring-1 ring-border p-5 shadow-rest"
     >
       <h2 className="mb-4 text-base font-semibold tracking-tight text-ink">Sleep</h2>
       <div className="grid grid-cols-2 gap-3">
@@ -297,7 +297,7 @@ export function MoodCard({
   return (
     <section
       aria-label="Mood"
-      className="rounded-card border border-hairline bg-elevated p-5 shadow-rest"
+      className="rounded-card bg-elevated ring-1 ring-border p-5 shadow-rest"
     >
       <h2 className="mb-4 text-base font-semibold tracking-tight text-ink">Mood</h2>
       <div role="group" aria-label="Select today's mood" className="flex flex-wrap gap-2">

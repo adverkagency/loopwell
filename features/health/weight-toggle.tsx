@@ -8,7 +8,7 @@ export function WeightToggle({ enabled }: { enabled: boolean }) {
   const [optimistic, setOptimistic] = useOptimistic(enabled);
 
   return (
-    <label className="flex cursor-pointer items-center justify-between rounded-card border border-hairline bg-elevated px-5 py-4 shadow-rest">
+    <label className="flex cursor-pointer items-center justify-between rounded-card bg-elevated ring-1 ring-border px-5 py-4 shadow-rest">
       <span>
         <span className="block text-sm font-semibold text-ink">Weight tracking</span>
         <span className="block text-xs text-ink-muted">

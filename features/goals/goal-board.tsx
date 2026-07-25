@@ -84,13 +84,13 @@ export function GoalBoard({ goals }: { goals: Goal[] }) {
       </div>
 
       {adding ? (
-        <div className="rounded-card border border-hairline bg-elevated p-5 shadow-rest">
+        <div className="rounded-card bg-elevated ring-1 ring-border p-5 shadow-rest">
           <GoalForm action={createGoal} onDone={() => setAdding(false)} />
         </div>
       ) : null}
 
       {active.length === 0 && !adding ? (
-        <div className="flex flex-col items-center gap-3 rounded-card border border-hairline bg-elevated p-8 text-center shadow-rest">
+        <div className="flex flex-col items-center gap-3 rounded-card bg-elevated ring-1 ring-border p-8 text-center shadow-rest">
           <p className="text-sm text-ink-secondary">
             Set your first goal — anything you&apos;re working toward.
           </p>
@@ -111,7 +111,7 @@ export function GoalBoard({ goals }: { goals: Goal[] }) {
             <section
               key={g.id}
               aria-label={g.label}
-              className="flex flex-col gap-3 rounded-card border border-hairline bg-elevated p-5 shadow-rest"
+              className="flex flex-col gap-3 rounded-card bg-elevated ring-1 ring-border p-5 shadow-rest"
             >
               <div className="flex items-center justify-between gap-2">
                 <h2 className="text-base font-semibold tracking-tight text-ink">{g.label}</h2>

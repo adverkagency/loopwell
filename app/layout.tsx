@@ -1,5 +1,13 @@
 import type { Metadata } from "next";
+import { Instrument_Sans } from "next/font/google";
 import "./globals.css";
+
+// Dashboard typeface — one webfont, variable, self-hosted by next/font.
+const instrument = Instrument_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-instrument",
+});
 
 export const metadata: Metadata = {
   title: "Loopwell — Everything that makes up your day, in one calm place",
@@ -7,14 +15,18 @@ export const metadata: Metadata = {
     "Loopwell brings your habits, water, sleep, weight, nutrition, mood, and goals into one calm daily check-in. Free while in beta.",
 };
 
-// System-font-first (UI spec §2.5) — no webfont loading cost in the app.
+// One variable webfont for the whole app; system stack stays the fallback.
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className="h-full antialiased">
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`h-full antialiased ${instrument.variable}`}
+    >
       <head>
         {/* Apply saved theme before paint — prevents light/dark flash */}
         <script
