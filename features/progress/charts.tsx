@@ -86,6 +86,170 @@ export function TrendLine({
   );
 }
 
+/**
+ * Filled area + line over a longer window (30–90 days) — the Analytics and
+ * Health pages' "shape of the month" chart. Gaps (null) break the line rather
+ * than drawing a false zero.
+ */
+export function AreaTrend({
+  points,
+  ariaLabel,
+  max = 100,
+  suffix = "%",
+}: {
+  points: { label: string; value: number | null }[];
+  ariaLabel: string;
+  max?: number;
+  suffix?: string;
+}) {
+  const W = 600;
+  const H = 180;
+  const pad = 10;
+  const known = points.filter((p) => p.value !== null);
+  if (known.length < 2) {
+    return (
+      <p className="text-[13px] text-muted-foreground">
+        Two days of data and this chart fills in — keep logging.
+      </p>
+    );
+  }
+
+  const x = (i: number) => pad + (i / (points.length - 1)) * (W - pad * 2);
+  const y = (v: number) => pad + (1 - Math.min(1, v / max)) * (H - pad * 2);
+
+  // Segments split on gaps so a missing day is a break, not a dip to zero.
+  const segments: string[] = [];
+  let run: string[] = [];
+  points.forEach((p, i) => {
+    if (p.value === null) {
+      if (run.length > 1) segments.push(run.join(" "));
+      run = [];
+      return;
+    }
+    run.push(`${x(i).toFixed(1)},${y(p.value).toFixed(1)}`);
+  });
+  if (run.length > 1) segments.push(run.join(" "));
+
+  const firstIdx = points.findIndex((p) => p.value !== null);
+  const lastIdx = points.length - 1 - [...points].reverse().findIndex((p) => p.value !== null);
+  const area = points
+    .map((p, i) => (p.value === null ? null : `${x(i).toFixed(1)},${y(p.value).toFixed(1)}`))
+    .filter(Boolean)
+    .join(" ");
+
+  return (
+    <div>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        className="h-[180px] w-full"
+        preserveAspectRatio="none"
+        role="img"
+        aria-label={ariaLabel}
+      >
+        {[0.25, 0.5, 0.75].map((f) => (
+          <line
+            key={f}
+            x1={pad}
+            x2={W - pad}
+            y1={y(max * f)}
+            y2={y(max * f)}
+            stroke="var(--lw-border)"
+            strokeWidth="1"
+          />
+        ))}
+        <polygon
+          points={`${x(firstIdx).toFixed(1)},${H - pad} ${area} ${x(lastIdx).toFixed(1)},${H - pad}`}
+          fill="var(--accent-soft)"
+        />
+        {segments.map((seg, i) => (
+          <polyline
+            key={i}
+            points={seg}
+            fill="none"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            stroke="var(--accent)"
+            vectorEffect="non-scaling-stroke"
+          />
+        ))}
+      </svg>
+      <div className="tabular mt-2 flex justify-between text-[11px] text-muted-foreground">
+        <span>{points[0]?.label}</span>
+        <span>
+          Latest {known[known.length - 1].value}
+          {suffix}
+        </span>
+        <span>{points[points.length - 1]?.label}</span>
+      </div>
+    </div>
+  );
+}
+
+/** Month grid of habit completion — one soft dot per day, weeks as rows. */
+export function MonthGrid({
+  days,
+  monthLabel,
+}: {
+  days: { date: string; ratio: number | null }[];
+  monthLabel: string;
+}) {
+  // Pad so the 1st lands under its weekday (Monday-first, matching the app default)
+  const first = days[0]?.date;
+  const lead = first ? (weekdayIndex(first) + 6) % 7 : 0;
+
+  return (
+    <div>
+      <div className="grid grid-cols-7 gap-1.5 text-center text-[11px] font-medium text-muted-foreground">
+        {["M", "T", "W", "T", "F", "S", "S"].map((d, i) => (
+          <span key={i}>{d}</span>
+        ))}
+      </div>
+      <div
+        role="img"
+        aria-label={`${monthLabel} habit completion — ${days.filter((d) => (d.ratio ?? 0) > 0).length} of ${days.length} days logged`}
+        className="mt-2 grid grid-cols-7 gap-1.5"
+      >
+        {Array.from({ length: lead }).map((_, i) => (
+          <span key={`pad-${i}`} aria-hidden />
+        ))}
+        {days.map((d) => (
+          <span
+            key={d.date}
+            title={
+              d.ratio === null
+                ? `${d.date}: still to come`
+                : `${d.date}: ${Math.round(d.ratio * 100)}%`
+            }
+            className={`grid aspect-square place-items-center rounded-xl text-[12px] tabular ${
+              d.ratio === null
+                ? "border border-dashed border-border text-muted-foreground/50"
+                : d.ratio === 0
+                  ? "bg-secondary text-muted-foreground"
+                  : d.ratio < 0.5
+                    ? "bg-accent-soft text-accent"
+                    : d.ratio < 1
+                      ? "bg-accent-line text-accent"
+                      : "bg-accent font-semibold text-accent-foreground"
+            }`}
+          >
+            {Number(d.date.slice(8))}
+          </span>
+        ))}
+      </div>
+      <p className="mt-3 text-[12px] text-muted-foreground">
+        Deeper green means more of that day&apos;s habits were completed. Dashed
+        days haven&apos;t happened yet.
+      </p>
+    </div>
+  );
+}
+
+function weekdayIndex(date: string): number {
+  const [y, m, d] = date.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+}
+
 export function Heatmap({
   days,
 }: {
@@ -130,7 +294,7 @@ export function Heatmap({
 }
 
 function heatColor(ratio: number): string {
-  if (ratio <= 0) return "var(--lw-bg-secondary)";
+  if (ratio <= 0) return "var(--lw-bg-sunken)";
   if (ratio < 0.35) return "var(--lw-teal-100)";
   if (ratio < 0.6) return "var(--lw-teal-300)";
   if (ratio < 0.85) return "var(--lw-teal-500)";

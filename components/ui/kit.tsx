@@ -181,6 +181,35 @@ export function SkeletonCard({
   );
 }
 
+/**
+ * Route-level loading shell — header block plus n card placeholders.
+ * Every dashboard route's loading.tsx is one call to this, so the app never
+ * flashes a blank main area while a server page streams.
+ */
+export function PageSkeleton({
+  label,
+  cards = 3,
+  lines = 3,
+}: {
+  label: string;
+  cards?: number;
+  lines?: number;
+}) {
+  return (
+    <div aria-busy="true" aria-live="polite" className="space-y-8 md:space-y-10">
+      <span className="sr-only">{label}</span>
+      <div>
+        <Skeleton className="h-3 w-20" />
+        <Skeleton className="mt-3 h-7 w-48 rounded-2xl" />
+        <Skeleton className="mt-3 h-4 w-72" />
+      </div>
+      {Array.from({ length: cards }).map((_, i) => (
+        <SkeletonCard key={i} lines={lines} />
+      ))}
+    </div>
+  );
+}
+
 /* ---------------- empty state ---------------- */
 
 export function EmptyState({

@@ -5,7 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Bell,
+  CalendarDays,
   ChartColumn,
+  HeartPulse,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -14,19 +16,32 @@ import {
   SquareCheckBig,
   Target,
   TrendingUp,
+  Trophy,
+  Users,
+  Utensils,
   X,
   type LucideIcon,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { GlobalSearch } from "@/components/layout/global-search";
 import { logout } from "@/app/(auth)/actions";
 
-/** Locked IA: Daily, Progress, Goals, Settings. Habits management sits under
- *  Settings but earns a top-level entry here — it's the core loop's home. */
+/**
+ * Navigation order mirrors the reference design. Habits points at its own page
+ * (the tri-state list + streaks); the add/edit/archive manager stays under
+ * Settings, which is why Settings still lights up on /dashboard/settings/habits.
+ */
 const NAV: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/dashboard/settings/habits", label: "Habits", icon: SquareCheckBig },
+  { href: "/dashboard/habits", label: "Habits", icon: SquareCheckBig },
   { href: "/dashboard/goals", label: "Goals", icon: Target },
+  { href: "/dashboard/health", label: "Health", icon: HeartPulse },
+  { href: "/dashboard/nutrition", label: "Nutrition", icon: Utensils },
   { href: "/dashboard/progress", label: "Progress", icon: TrendingUp },
+  { href: "/dashboard/analytics", label: "Analytics", icon: ChartColumn },
+  { href: "/dashboard/friends", label: "Friends", icon: Users },
+  { href: "/dashboard/challenges", label: "Challenges", icon: Trophy },
+  { href: "/dashboard/calendar", label: "Calendar", icon: CalendarDays },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
@@ -60,14 +75,17 @@ export function AppShell({
   }, [open]);
 
   function isActive(href: string) {
-    return href === "/dashboard/settings"
-      ? pathname === href
-      : pathname.startsWith(href);
+    // "/dashboard" prefixes every route, so the index must match exactly or it
+    // would light up on every page.
+    if (href === "/dashboard") return pathname === href;
+    return pathname === href || pathname.startsWith(`${href}/`);
   }
 
-  const nav = (
+  // `withSearch` puts search inside the drawer on mobile, where the header
+  // has no room for it.
+  const navPanel = (withSearch: boolean) => (
     <>
-      <div className="mb-9 flex items-center gap-3 px-3">
+      <div className="mb-6 flex items-center gap-3 px-3">
         <span
           aria-hidden
           className="grid size-9 shrink-0 place-items-center rounded-xl bg-accent"
@@ -76,7 +94,8 @@ export function AppShell({
         </span>
         <span className="text-[17px] font-semibold tracking-tight">Loopwell</span>
       </div>
-      <nav aria-label="Primary" className="flex-1 overflow-y-auto">
+      {withSearch ? <GlobalSearch className="mb-5 px-1" /> : null}
+      <nav aria-label="Primary" className="-mx-1 flex-1 overflow-y-auto px-1">
         <ul className="space-y-0.5">
           {NAV.map(({ href, label, icon: Icon }) => {
             const active = isActive(href);
@@ -125,7 +144,7 @@ export function AppShell({
 
       {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-[264px] flex-col border-r border-border bg-surface/60 px-4 py-7 lg:flex">
-        {nav}
+        {navPanel(false)}
       </aside>
 
       {/* Mobile drawer */}
@@ -152,7 +171,7 @@ export function AppShell({
             >
               <X aria-hidden className="size-[18px]" />
             </button>
-            {nav}
+            {navPanel(true)}
           </div>
         </div>
       ) : null}
@@ -177,14 +196,8 @@ export function AppShell({
                 {greeting}
               </h1>
             </div>
+            <GlobalSearch className="hidden w-full max-w-[260px] md:block" />
             <div className="flex shrink-0 items-center gap-1 sm:gap-2">
-              <Link
-                href="/dashboard/progress"
-                aria-label="Progress and achievements"
-                className="relative hidden size-11 place-items-center rounded-xl text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:grid"
-              >
-                <ChartColumn aria-hidden className="size-[18px]" strokeWidth={1.75} />
-              </Link>
               <Link
                 href="/dashboard/settings"
                 aria-label="Reminders and settings"

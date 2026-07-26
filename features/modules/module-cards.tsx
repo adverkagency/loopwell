@@ -16,14 +16,20 @@ import { ChevronDownIcon, PlusIcon, XIcon } from "@/components/ui/icons";
 function ModuleCard({
   title,
   summary,
+  defaultOpen = false,
   children,
 }: {
   title: string;
   summary: string;
+  /** Collapsed on the Daily page (retention order); open on its own page. */
+  defaultOpen?: boolean;
   children: React.ReactNode;
 }) {
   return (
-    <details className="group overflow-hidden rounded-3xl bg-surface shadow-[var(--shadow-e1)] ring-1 ring-border transition-shadow duration-200 open:shadow-[var(--shadow-e2)]">
+    <details
+      open={defaultOpen}
+      className="group overflow-hidden rounded-3xl bg-surface shadow-[var(--shadow-e1)] ring-1 ring-border transition-shadow duration-200 open:shadow-[var(--shadow-e2)]"
+    >
       <summary className="flex min-h-11 cursor-pointer select-none items-center gap-3 p-5 transition-colors duration-200 hover:bg-secondary/60 [&::-webkit-details-marker]:hidden">
         <h2 className="text-[15px] font-semibold tracking-tight">{title}</h2>
         <span className="tabular flex-1 text-right text-[13px] text-muted-foreground group-open:invisible">
@@ -58,9 +64,11 @@ export type NutritionEntry = {
 export function NutritionCard({
   today,
   entries,
+  defaultOpen = false,
 }: {
   today: string;
   entries: NutritionEntry[];
+  defaultOpen?: boolean;
 }) {
   const [, startTransition] = useTransition();
   const [query, setQuery] = useState("");
@@ -134,6 +142,7 @@ export function NutritionCard({
   return (
     <ModuleCard
       title="Nutrition"
+      defaultOpen={defaultOpen}
       summary={
         entries.length === 0
           ? "Nothing yet — tap to log food"
