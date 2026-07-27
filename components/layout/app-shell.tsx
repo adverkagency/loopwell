@@ -122,7 +122,9 @@ export function AppShell({
           })}
         </ul>
       </nav>
-      <div className="mt-6 rounded-2xl bg-accent-soft p-5">
+      {/* Eleven nav items need the vertical room on short viewports — without
+          this the list scrolls and Settings drops below the fold. */}
+      <div className="mt-6 rounded-2xl bg-accent-soft p-5 [@media(max-height:820px)]:hidden">
         <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
           Daily focus
         </p>

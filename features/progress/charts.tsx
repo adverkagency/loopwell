@@ -117,25 +117,24 @@ export function AreaTrend({
   const x = (i: number) => pad + (i / (points.length - 1)) * (W - pad * 2);
   const y = (v: number) => pad + (1 - Math.min(1, v / max)) * (H - pad * 2);
 
-  // Segments split on gaps so a missing day is a break, not a dip to zero.
-  const segments: string[] = [];
+  // Split on gaps so a missing day is a break, not a dip to zero. The fill is
+  // split the same way — otherwise it bridges straight across unlogged days
+  // while the line correctly breaks, implying data that isn't there.
+  const segments: { line: string; from: number; to: number }[] = [];
   let run: string[] = [];
+  let from = 0;
   points.forEach((p, i) => {
     if (p.value === null) {
-      if (run.length > 1) segments.push(run.join(" "));
+      if (run.length > 1) segments.push({ line: run.join(" "), from, to: i - 1 });
       run = [];
       return;
     }
+    if (run.length === 0) from = i;
     run.push(`${x(i).toFixed(1)},${y(p.value).toFixed(1)}`);
   });
-  if (run.length > 1) segments.push(run.join(" "));
-
-  const firstIdx = points.findIndex((p) => p.value !== null);
-  const lastIdx = points.length - 1 - [...points].reverse().findIndex((p) => p.value !== null);
-  const area = points
-    .map((p, i) => (p.value === null ? null : `${x(i).toFixed(1)},${y(p.value).toFixed(1)}`))
-    .filter(Boolean)
-    .join(" ");
+  if (run.length > 1) {
+    segments.push({ line: run.join(" "), from, to: points.length - 1 });
+  }
 
   return (
     <div>
@@ -157,14 +156,17 @@ export function AreaTrend({
             strokeWidth="1"
           />
         ))}
-        <polygon
-          points={`${x(firstIdx).toFixed(1)},${H - pad} ${area} ${x(lastIdx).toFixed(1)},${H - pad}`}
-          fill="var(--accent-soft)"
-        />
+        {segments.map((seg, i) => (
+          <polygon
+            key={`fill-${i}`}
+            points={`${x(seg.from).toFixed(1)},${H - pad} ${seg.line} ${x(seg.to).toFixed(1)},${H - pad}`}
+            fill="var(--accent-soft)"
+          />
+        ))}
         {segments.map((seg, i) => (
           <polyline
-            key={i}
-            points={seg}
+            key={`line-${i}`}
+            points={seg.line}
             fill="none"
             strokeWidth="2.5"
             strokeLinecap="round"
