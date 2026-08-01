@@ -5,6 +5,7 @@ import { addWater, setMood, setSleep, setWeight } from "./actions";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useSavedFlash } from "@/lib/use-saved-flash";
 import { CARD_BASE, SavedFlash, buttonClass } from "@/components/ui/kit";
+import { TimePicker } from "@/components/ui/time-picker";
 import {
   bmi,
   bmiCategory,
@@ -214,35 +215,38 @@ export function SleepCard({
         <h2 className="text-[15px] font-semibold tracking-tight">Sleep</h2>
         {saved ? <SavedFlash /> : null}
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      {/* Stacked on phones so each field is full width — the right-anchored
+          time panel would otherwise run off the left edge of a half-width
+          column. */}
+      <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2">
         <div className="flex flex-col gap-2">
           <label htmlFor="bed-time" className="text-[13px] font-medium text-muted-foreground">
             Bed time
           </label>
-          <input
+          <TimePicker
             id="bed-time"
-            type="time"
             value={bed}
-            onChange={(e) => {
-              setBed(e.target.value);
-              persist(e.target.value, wake, quality);
+            base="22:00"
+            placeholder="Bed time"
+            onChange={(next) => {
+              setBed(next);
+              persist(next, wake, quality);
             }}
-            className="tabular h-11 w-full rounded-xl bg-secondary px-3.5 text-[14px] text-foreground ring-1 ring-border transition-all duration-200 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-ring/45"
           />
         </div>
         <div className="flex flex-col gap-2">
           <label htmlFor="wake-time" className="text-[13px] font-medium text-muted-foreground">
             Wake time
           </label>
-          <input
+          <TimePicker
             id="wake-time"
-            type="time"
             value={wake}
-            onChange={(e) => {
-              setWake(e.target.value);
-              persist(bed, e.target.value, quality);
+            base="07:00"
+            placeholder="Wake time"
+            onChange={(next) => {
+              setWake(next);
+              persist(bed, next, quality);
             }}
-            className="tabular h-11 w-full rounded-xl bg-secondary px-3.5 text-[14px] text-foreground ring-1 ring-border transition-all duration-200 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-ring/45"
           />
         </div>
       </div>
