@@ -295,7 +295,7 @@ function GoalForm({
         <label htmlFor="g-label" className="text-[13px] font-medium text-muted-foreground">Label</label>
         <input id="g-label" name="label" defaultValue={goal?.label} required maxLength={120} placeholder="e.g. Run a 10K" className={input} />
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="flex flex-col gap-2">
           <label htmlFor="g-target" className="text-[13px] font-medium text-muted-foreground">Target value</label>
           <input id="g-target" name="target_value" type="number" step="any" required defaultValue={goal?.target_value} placeholder="10" className={`tabular ${input}`} />
@@ -305,7 +305,7 @@ function GoalForm({
           <input id="g-current" name="current_value" type="number" step="any" defaultValue={goal?.current_value ?? 0} className={`tabular ${input}`} />
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="flex flex-col gap-2">
           <label htmlFor="g-unit" className="text-[13px] font-medium text-muted-foreground">Unit (optional)</label>
           <input id="g-unit" name="unit" defaultValue={goal?.unit ?? ""} maxLength={20} placeholder="books, lbs, $" className={input} />

@@ -177,7 +177,10 @@ export function DatePicker({
           role="dialog"
           aria-modal="false"
           aria-label="Choose a date"
-          className="drawer-in absolute left-0 z-40 mt-2 w-[288px] rounded-2xl bg-surface p-4 shadow-[var(--shadow-e3)] ring-1 ring-border"
+          /* Anchored right: these fields often sit in the right-hand column of
+             a two-up grid, where a left-anchored 288px panel would hang off
+             the screen on a phone. */
+          className="drawer-in absolute right-0 z-40 mt-2 w-[288px] max-w-[calc(100vw-2rem)] rounded-2xl bg-surface p-4 shadow-[var(--shadow-e3)] ring-1 ring-border"
         >
           <div className="mb-3 flex items-center justify-between gap-2">
             <button
