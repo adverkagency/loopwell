@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { Clock } from "lucide-react";
+import { useEdgeClamp } from "./use-edge-clamp";
 
 /**
  * The app's time field. Replaces `<input type="time">`, whose popup is drawn
@@ -58,6 +59,7 @@ export function TimePicker({
   const fieldId = id ?? fallbackId;
   const rootRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
+  const panelRef = useEdgeClamp(open);
 
   const { hour12, minute, period } = split(value, base);
   // Minutes off the step (e.g. an older 07:23 log) still need a row to sit on
@@ -108,9 +110,10 @@ export function TimePicker({
 
       {open ? (
         <div
+          ref={panelRef}
           role="dialog"
           aria-label="Choose a time"
-          className="drawer-in absolute right-0 z-40 mt-2 w-[236px] max-w-[calc(100vw-2rem)] rounded-2xl bg-surface p-3 shadow-[var(--shadow-e3)] ring-1 ring-border"
+          className="drawer-in absolute left-0 z-40 mt-2 w-[236px] max-w-[calc(100vw-1rem)] rounded-2xl bg-surface p-3 shadow-[var(--shadow-e3)] ring-1 ring-border"
         >
           <div className="grid grid-cols-[1fr_1fr_auto] gap-2">
             <Column label="Hour">

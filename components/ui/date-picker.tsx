@@ -3,6 +3,7 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 import { addDays } from "@/lib/dates";
+import { useEdgeClamp } from "./use-edge-clamp";
 
 /**
  * The app's date field. Replaces `<input type="date">`, whose popup is drawn
@@ -66,6 +67,7 @@ export function DatePicker({
   const now = today ?? new Date().toISOString().slice(0, 10);
   const [value, setValue] = useState(defaultValue);
   const [open, setOpen] = useState(false);
+  const panelRef = useEdgeClamp(open);
   // The day the arrow keys are sitting on — not necessarily the selected one.
   const [cursor, setCursor] = useState(defaultValue || now);
 
@@ -177,10 +179,8 @@ export function DatePicker({
           role="dialog"
           aria-modal="false"
           aria-label="Choose a date"
-          /* Anchored right: these fields often sit in the right-hand column of
-             a two-up grid, where a left-anchored 288px panel would hang off
-             the screen on a phone. */
-          className="drawer-in absolute right-0 z-40 mt-2 w-[288px] max-w-[calc(100vw-2rem)] rounded-2xl bg-surface p-4 shadow-[var(--shadow-e3)] ring-1 ring-border"
+          ref={panelRef}
+          className="drawer-in absolute left-0 z-40 mt-2 w-[288px] max-w-[calc(100vw-1rem)] rounded-2xl bg-surface p-4 shadow-[var(--shadow-e3)] ring-1 ring-border"
         >
           <div className="mb-3 flex items-center justify-between gap-2">
             <button
