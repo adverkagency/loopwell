@@ -292,6 +292,16 @@ body {
   .lift:hover { box-shadow: var(--shadow-e1); transform: none; }
 }
 
+/* Theme flips must be instant. Every colour token changes at once, so without
+   this the ~40 elements carrying `transition-colors` all animate together and
+   the switch reads as lag. The attribute is set for a single frame. */
+html[data-theme-switching] *,
+html[data-theme-switching] *::before,
+html[data-theme-switching] *::after {
+  transition: none !important;
+  animation: none !important;
+}
+
 /* Reactive Lift — the one hover elevation used across every card */
 .lift {
   transition:

@@ -191,7 +191,9 @@ export function AppShell({
               <Menu aria-hidden className="size-[18px]" strokeWidth={1.75} />
             </button>
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground">
+              {/* truncate, not wrap — at 390px "MONDAY, JULY 27" otherwise
+                  breaks over two lines and doubles the header height */}
+              <p className="truncate text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground">
                 {dateLabel}
               </p>
               <h1 className="truncate text-[15px] font-semibold tracking-tight sm:text-base">

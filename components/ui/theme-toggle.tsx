@@ -30,18 +30,31 @@ export function ThemeToggle() {
   function cycle() {
     const next: Theme =
       theme === "system" ? "light" : theme === "light" ? "dark" : "system";
+    const root = document.documentElement;
+
+    // Every colour token changes at once; without muting transitions for the
+    // flip, every element carrying `transition-colors` animates and the switch
+    // reads as lag. globals.css handles the muting, we just bracket the change.
+    root.setAttribute("data-theme-switching", "");
+
     if (next === "system") {
-      document.documentElement.removeAttribute("data-theme");
+      root.removeAttribute("data-theme");
       try {
         localStorage.removeItem(KEY);
       } catch {}
     } else {
-      document.documentElement.setAttribute("data-theme", next);
+      root.setAttribute("data-theme", next);
       try {
         localStorage.setItem(KEY, next);
       } catch {}
     }
     listeners.forEach((l) => l());
+
+    // Two frames: one for the new colours to paint, one before transitions
+    // are allowed back so nothing catches the tail of the change.
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => root.removeAttribute("data-theme-switching"))
+    );
   }
 
   const label =

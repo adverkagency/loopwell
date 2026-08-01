@@ -197,7 +197,10 @@ export function AnalyticsSection() {
   return (
     <section id="analytics" className="border-y border-lp-hairline bg-lp-ink text-lp-bg">
       <div className="mx-auto max-w-7xl px-6 py-28">
-        <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
+        {/* min-w-0: grid items default to min-width:auto, so the 30-column
+            heatmap below would widen the track past the viewport and its own
+            overflow-x-auto would never get a chance to scroll. */}
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-10 [&>*]:min-w-0">
           <div className="lg:col-span-4">
             <div className="text-xs uppercase tracking-widest text-lp-bg/60">Powerful analytics</div>
             <h2 className="mt-3 font-display text-4xl leading-tight md:text-5xl">

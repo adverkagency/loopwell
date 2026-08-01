@@ -18,6 +18,7 @@ import {
   buttonClass,
 } from "@/components/ui/kit";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { DatePicker } from "@/components/ui/date-picker";
 
 export type Goal = {
   id: string;
@@ -311,7 +312,7 @@ function GoalForm({
         </div>
         <div className="flex flex-col gap-2">
           <label htmlFor="g-deadline" className="text-[13px] font-medium text-muted-foreground">Deadline (optional)</label>
-          <input id="g-deadline" name="deadline" type="date" defaultValue={goal?.deadline ?? ""} className={`tabular ${input}`} />
+          <DatePicker id="g-deadline" name="deadline" defaultValue={goal?.deadline ?? ""} placeholder="No deadline" />
         </div>
       </div>
       {goal ? <input type="hidden" name="start_value" value={goal.start_value ?? ""} /> : null}
