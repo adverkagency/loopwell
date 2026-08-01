@@ -50,11 +50,13 @@ export function ThemeToggle() {
     }
     listeners.forEach((l) => l());
 
-    // Two frames: one for the new colours to paint, one before transitions
-    // are allowed back so nothing catches the tail of the change.
-    requestAnimationFrame(() =>
-      requestAnimationFrame(() => root.removeAttribute("data-theme-switching"))
-    );
+    // Two frames: one for the new colours to paint, one before transitions are
+    // allowed back so nothing catches the tail of the change. The timeout is a
+    // safety net — rAF is throttled in background tabs, and without it a user
+    // who switches tab mid-flip would leave transitions muted for good.
+    const restore = () => root.removeAttribute("data-theme-switching");
+    requestAnimationFrame(() => requestAnimationFrame(restore));
+    setTimeout(restore, 150);
   }
 
   const label =
