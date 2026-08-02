@@ -81,8 +81,10 @@ export function TimePicker({
     };
   }, [open]);
 
+  // before:-inset-y-2 pads the ~29px-tall row toward a 44px hit area (iOS
+  // HIG minimum); width is already full-column, so only height needs help.
   const cell = (selected: boolean) =>
-    `tabular w-full rounded-lg px-2 py-1.5 text-center text-[13px] transition-colors ${
+    `tabular relative w-full rounded-lg px-2 py-1.5 text-center text-[13px] transition-colors before:absolute before:-inset-y-2 before:inset-x-0 before:content-[''] ${
       selected
         ? "bg-accent font-semibold text-accent-foreground"
         : "text-foreground hover:bg-secondary"

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { safeTimezone } from "@/lib/dates";
 import { sleepDurationMinutes } from "@/lib/health";
 import {
   addWaterSchema,
@@ -128,5 +129,29 @@ export async function setWeightModuleEnabled(
 
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/settings");
+  return {};
+}
+
+/**
+ * Self-service timezone change — onboarding only captures this once, and
+ * without a way to fix it later a wrong OS clock at signup (or a move)
+ * permanently skews every "today" boundary: streaks, goals, challenges.
+ */
+export async function setTimezone(timezone: string): Promise<ActionState> {
+  const { supabase, user } = await requireUser();
+  const tz = safeTimezone(timezone);
+  if (tz !== timezone) return { error: "Unrecognized timezone." };
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ timezone: tz })
+    .eq("id", user.id);
+  if (error) return { error: "Couldn't update — try again." };
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/settings");
+  revalidatePath("/dashboard/goals");
+  revalidatePath("/dashboard/challenges");
+  revalidatePath("/dashboard/health");
   return {};
 }

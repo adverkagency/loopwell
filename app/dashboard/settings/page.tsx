@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Bell, ChevronRight, Download, ListChecks } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { WeightToggle } from "@/features/health/weight-toggle";
+import { TimezoneSetting } from "@/features/health/timezone-setting";
+import { safeTimezone } from "@/lib/dates";
 import { CARD_BASE, PageHeader, buttonClass } from "@/components/ui/kit";
 
 export const metadata = { title: "Settings — Loopwell" };
@@ -15,7 +17,7 @@ export default async function SettingsPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("weight_module_enabled")
+    .select("weight_module_enabled, timezone")
     .eq("id", user!.id)
     .single();
 
@@ -48,6 +50,8 @@ export default async function SettingsPage() {
         </Link>
 
         <WeightToggle enabled={profile?.weight_module_enabled !== false} />
+
+        <TimezoneSetting current={safeTimezone(profile?.timezone)} />
 
         <div className={`${CARD_BASE} px-5 py-5`}>
           <div className="flex items-start gap-4">

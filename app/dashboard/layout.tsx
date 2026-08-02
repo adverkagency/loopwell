@@ -1,7 +1,15 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AppShell } from "@/components/layout/app-shell";
 import { safeTimezone } from "@/lib/dates";
+
+// Defense in depth alongside robots.ts's disallow rule — the app zone is
+// behind auth (proxy.ts) and carries no SEO value, so it should never index
+// even if crawled directly (e.g. a stale/shared link).
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 /** Authenticated app shell — proxy already gates, this is defense in depth + user context. */
 export default async function AppLayout({

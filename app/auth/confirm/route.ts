@@ -1,6 +1,7 @@
 import { type EmailOtpType } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { safeRedirectTarget } from "@/lib/safe-redirect";
 
 /**
  * Handles Supabase email links (signup confirmation, password recovery).
@@ -16,12 +17,10 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient();
     const { error } = await supabase.auth.verifyOtp({ type, token_hash });
     if (!error) {
-      const dest =
-        next && next.startsWith("/")
-          ? next
-          : type === "recovery"
-            ? "/reset-password"
-            : "/dashboard";
+      const dest = safeRedirectTarget(
+        next,
+        type === "recovery" ? "/reset-password" : "/dashboard"
+      );
       return NextResponse.redirect(new URL(dest, request.url));
     }
   }

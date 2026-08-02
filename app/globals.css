@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 /* =========================================================
-   Loopwell design tokens — source of truth: /DESIGN.md
+   Loopwell design tokens — source of truth: DESIGN.md, one
+   level up in the project root (outside this repo/package).
    "The Quiet Notebook": warm paper, one teal voice,
    scarce coral flame, tabular numbers, no pure black/white.
    Light is default; dark flips via [data-theme="dark"] or
@@ -49,7 +50,12 @@
   /* Semantic + habit states (No-Guilt Palette Rule) */
   --lw-success: #2f7f56;
   --lw-warning: #c98a1f;
-  --lw-danger: #d1594a;
+  --lw-danger: #b8483a;          /* ≥4.5:1 on canvas + surface (AA, text/icon use) */
+  /* Filled danger buttons (e.g. destructive confirm) need a bg dark enough
+     for white text in BOTH themes — --lw-danger itself is brightened for
+     dark-mode text legibility and fails AA as a button fill there, so this
+     stays constant across themes rather than following the danger token. */
+  --lw-danger-strong: #b8483a;   /* ≥4.5:1 with white text, either theme */
   --lw-info: #3d7fbf;
   --lw-partial: #d99a1e;         /* Partial Gold — dark ink icons only */
   --lw-skip: #b3ad9c;            /* Skip Stone — dark ink icons only */
@@ -222,6 +228,7 @@
   --color-success: var(--lw-success);
   --color-warning: var(--lw-warning);
   --color-danger: var(--lw-danger);
+  --color-danger-strong: var(--lw-danger-strong);
   --color-info: var(--lw-info);
   --color-partial: var(--lw-partial);
   --color-skip: var(--lw-skip);
@@ -422,6 +429,11 @@ html[data-theme-switching] *::after {
   --lp-primary: oklch(38% 0.055 152);
   --lp-primary-fg: oklch(98.5% 0.006 90);
   --lp-accent: oklch(72% 0.14 75);
+  /* --lp-accent itself is only ≥AA when it sits on the dark bg-lp-ink
+     sections; on bg-lp-bg/bg-lp-surface (near-white) it drops to ~2.4:1.
+     Use this darker variant instead wherever the accent lands on a light
+     surface (e.g. the streak-flame icon in the two floating stat cards). */
+  --lp-accent-strong: oklch(46% 0.13 75);
   --lp-success: oklch(62% 0.14 150);
 }
 
@@ -435,6 +447,7 @@ html[data-theme-switching] *::after {
   --color-lp-primary: var(--lp-primary);
   --color-lp-primary-fg: var(--lp-primary-fg);
   --color-lp-accent: var(--lp-accent);
+  --color-lp-accent-strong: var(--lp-accent-strong);
   --color-lp-success: var(--lp-success);
 
   --shadow-soft: 0 1px 2px oklch(14% 0.015 260 / 0.04), 0 8px 24px oklch(14% 0.015 260 / 0.06);

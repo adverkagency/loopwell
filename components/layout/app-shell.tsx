@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -65,13 +65,41 @@ export function AppShell({
   const [openAt, setOpenAt] = useState<string | null>(null);
   const open = openAt === pathname;
   const setOpen = (next: boolean) => setOpenAt(next ? pathname : null);
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const drawerTrigger = useRef<HTMLElement | null>(null);
 
-  // Escape closes the drawer
+  // Escape closes the drawer, Tab is trapped inside it, and closing (by any
+  // path — Escape, backdrop, X, or a nav Link navigating away) returns focus
+  // to whichever button opened it.
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpenAt(null);
+    drawerTrigger.current = document.activeElement as HTMLElement | null;
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpenAt(null);
+        return;
+      }
+      if (e.key !== "Tab" || !drawerRef.current) return;
+      const focusable = drawerRef.current.querySelectorAll<HTMLElement>(
+        "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])"
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      drawerTrigger.current?.focus();
+    };
   }, [open]);
 
   function isActive(href: string) {
@@ -159,6 +187,7 @@ export function AppShell({
             className="scrim-in absolute inset-0 bg-foreground/25 backdrop-blur-[2px]"
           />
           <div
+            ref={drawerRef}
             role="dialog"
             aria-modal="true"
             aria-label="Navigation"

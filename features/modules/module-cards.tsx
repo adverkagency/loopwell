@@ -10,6 +10,8 @@ import {
 } from "./actions";
 import type { FoodResult } from "@/app/api/food-search/route";
 import { ChevronDownIcon, PlusIcon, XIcon } from "@/components/ui/icons";
+import { INPUT } from "@/components/ui/kit";
+import { useSavedFlash } from "@/lib/use-saved-flash";
 
 /* ---------- Shared collapsed-module shell (depth is opt-in) ---------- */
 
@@ -45,8 +47,7 @@ function ModuleCard({
   );
 }
 
-const inputCls =
-  "h-11 w-full rounded-xl bg-secondary px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground ring-1 ring-border transition-all duration-200 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-ring/45";
+const inputCls = INPUT;
 
 /* ---------- Nutrition ---------- */
 
@@ -476,7 +477,7 @@ export function JournalCard({
   initialBody: string;
 }) {
   const [, startTransition] = useTransition();
-  const [saved, setSaved] = useState(false);
+  const { saved, flash } = useSavedFlash(2000);
   const [error, setError] = useState<string | null>(null);
 
   function persist(body: string) {
@@ -484,10 +485,7 @@ export function JournalCard({
     startTransition(async () => {
       const res = await saveJournal({ date: today, body });
       if (res.error) setError(res.error);
-      else {
-        setSaved(true);
-        setTimeout(() => setSaved(false), 2000);
-      }
+      else flash();
     });
   }
 

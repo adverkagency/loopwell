@@ -1,6 +1,6 @@
 "use client";
 
-import { useOptimistic, useTransition, useState } from "react";
+import { useOptimistic, useRef, useTransition, useState } from "react";
 import Link from "next/link";
 import { Check, CircleDashed, Flame, SkipForward } from "lucide-react";
 import { setHabitState } from "./actions";
@@ -47,6 +47,9 @@ export function HabitList({
     Optimistic,
     { id: string; state: HabitState | null }
   >({}, (prev, { id, state }) => ({ ...prev, [id]: state }));
+  // Per-habit write queue: rapid tap-tap-tap must land in the DB in click
+  // order, or the last *response* (not the last click) would silently win.
+  const chains = useRef<Record<string, Promise<unknown>>>({});
 
   function stateOf(h: DailyHabit): HabitState | null {
     return h.id in optimistic ? optimistic[h.id] : h.todayState;
@@ -56,14 +59,18 @@ export function HabitList({
     const target = stateOf(h) === next ? null : next;
     setError(null);
     if (target === "complete") setPulse(h.id); // completion is the moment worth animating
-    startTransition(async () => {
+    startTransition(() => {
       applyOptimistic({ id: h.id, state: target });
-      const res = await setHabitState({
-        habit_id: h.id,
-        date: today,
-        state: target,
-      });
-      if (res.error) setError(res.error); // revalidate restores server truth
+    });
+    const prior = chains.current[h.id] ?? Promise.resolve();
+    const call = prior.then(() =>
+      setHabitState({ habit_id: h.id, date: today, state: target })
+    );
+    chains.current[h.id] = call;
+    call.then((res) => {
+      // Only surface an error if this is still the most recent tap —
+      // an older, since-superseded response shouldn't override newer state.
+      if (chains.current[h.id] === call && res.error) setError(res.error);
     });
   }
 

@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import type { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { safeRedirectTarget } from "@/lib/safe-redirect";
 import {
   forgotPasswordSchema,
   loginSchema,
@@ -88,8 +89,7 @@ export async function login(
     return { error: "Wrong email or password.", values: keepEmail(formData) };
   }
 
-  const next = formData.get("next");
-  redirect(typeof next === "string" && next.startsWith("/") ? next : "/dashboard");
+  redirect(safeRedirectTarget(formData.get("next"), "/dashboard"));
 }
 
 export async function logout(): Promise<void> {

@@ -9,7 +9,10 @@ import { createClient } from "@/lib/supabase/server";
 
 function csvEscape(v: unknown): string {
   if (v === null || v === undefined) return "";
-  const s = String(v);
+  let s = String(v);
+  // Neutralize formula injection: Excel/Sheets execute cells starting with
+  // these characters when the file is opened.
+  if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
   return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 

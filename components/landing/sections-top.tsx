@@ -237,7 +237,7 @@ export function Hero() {
             </div>
           </div>
           <FloatingCard
-            icon={<Flame className="h-4 w-4 text-lp-accent" />}
+            icon={<Flame className="h-4 w-4 text-lp-accent-strong" />}
             label="Current streak"
             value="47 days"
             className="-left-4 top-24"

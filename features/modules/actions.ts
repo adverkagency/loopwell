@@ -94,11 +94,12 @@ export async function saveJournal(input: {
   const { supabase, user } = await requireUser();
 
   if (parsed.data.body.trim() === "") {
-    await supabase
+    const { error } = await supabase
       .from("journal_entries")
       .delete()
       .eq("user_id", user.id)
       .eq("date", parsed.data.date);
+    if (error) return { error: "Couldn't clear the entry — try again." };
   } else {
     const { error } = await supabase.from("journal_entries").upsert(
       {

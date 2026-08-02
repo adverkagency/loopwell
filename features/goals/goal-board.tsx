@@ -14,6 +14,7 @@ import { PlusIcon, CheckIcon } from "@/components/ui/icons";
 import {
   CARD_BASE,
   EmptyState,
+  INPUT,
   LoopIllustration,
   buttonClass,
 } from "@/components/ui/kit";
@@ -289,8 +290,7 @@ export function GoalForm({
     {}
   );
 
-  const input =
-    "h-11 w-full rounded-xl bg-secondary px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground ring-1 ring-border transition-all duration-200 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-ring/45";
+  const input = INPUT;
 
   return (
     <form action={formAction} className="flex flex-col gap-4">

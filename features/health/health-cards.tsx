@@ -4,7 +4,7 @@ import { useOptimistic, useRef, useState, useTransition } from "react";
 import { addWater, setMood, setSleep, setWeight } from "./actions";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useSavedFlash } from "@/lib/use-saved-flash";
-import { CARD_BASE, SavedFlash, buttonClass } from "@/components/ui/kit";
+import { CARD_BASE, INPUT, SavedFlash, buttonClass } from "@/components/ui/kit";
 import { TimePicker } from "@/components/ui/time-picker";
 import {
   bmi,
@@ -154,7 +154,7 @@ export function WeightCard({
           defaultValue={display}
           onBlur={(e) => save(e.currentTarget.value)}
           placeholder={imperial ? "e.g. 176" : "e.g. 79.8"}
-          className="tabular h-11 w-full rounded-xl bg-secondary px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground ring-1 ring-border transition-all duration-200 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-ring/45"
+          className={`tabular ${INPUT}`}
         />
         {error ? (
           <p role="alert" className="text-[13px] font-medium text-danger">{error}</p>
@@ -360,7 +360,7 @@ export function MoodCard({
           defaultValue={initial?.note ?? ""}
           onBlur={() => persist(mood)}
           placeholder="What's driving today's mood?"
-          className="h-11 w-full rounded-xl bg-secondary px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground ring-1 ring-border transition-all duration-200 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-ring/45"
+          className={INPUT}
         />
       </div>
       {error ? (

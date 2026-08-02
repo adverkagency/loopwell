@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
-import { addDays } from "@/lib/dates";
+import { addDays, todayInTz } from "@/lib/dates";
 import { useEdgeClamp } from "./use-edge-clamp";
 
 /**
@@ -64,7 +64,11 @@ export function DatePicker({
   const rootRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
-  const now = today ?? new Date().toISOString().slice(0, 10);
+  // Fallback only fires when the caller doesn't pass a server-computed
+  // `today` — use the browser's own timezone, not UTC, so "Today" can't land
+  // on tomorrow's date for anyone west of UTC in the evening.
+  const now =
+    today ?? todayInTz(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const [value, setValue] = useState(defaultValue);
   const [open, setOpen] = useState(false);
   const panelRef = useEdgeClamp(open);
@@ -145,8 +149,10 @@ export function DatePicker({
     setCursor(iso(y, mm, Math.min(view.d, daysInMonth(y, mm))));
   }
 
+  // before:-inset-1 pads the 36px button to a 44px hit area (iOS HIG minimum)
+  // without changing its visual size or the header layout.
   const navBtn =
-    "grid size-9 shrink-0 place-items-center rounded-xl text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground";
+    "relative grid size-9 shrink-0 place-items-center rounded-xl text-muted-foreground transition-colors before:absolute before:-inset-1 before:content-[''] hover:bg-secondary hover:text-foreground";
 
   return (
     <div ref={rootRef} className="relative">
@@ -239,7 +245,9 @@ export function DatePicker({
                   aria-current={date === now ? "date" : undefined}
                   tabIndex={date === cursor ? 0 : -1}
                   onClick={() => commit(date)}
-                  className={`tabular grid aspect-square place-items-center rounded-xl text-[13px] transition-colors ${
+                  /* before:-inset-1.5 pads the ~33px cell toward a 44px hit
+                     area (iOS HIG minimum) without upsetting the 7-col grid. */
+                  className={`tabular relative grid aspect-square place-items-center rounded-xl text-[13px] transition-colors before:absolute before:-inset-1.5 before:content-[''] ${
                     date === value
                       ? "bg-accent font-semibold text-accent-foreground"
                       : date === now

@@ -334,7 +334,7 @@ export function ConsistencySection() {
                   47<span className="text-lg text-lp-muted"> days</span>
                 </div>
               </div>
-              <Flame className="h-6 w-6 text-lp-accent" />
+              <Flame className="h-6 w-6 text-lp-accent-strong" />
             </div>
             <div className="mt-4 flex gap-1">
               {Array.from({ length: 21 }, (_, i) => (

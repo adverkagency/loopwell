@@ -9,7 +9,7 @@ import {
   type ActionState,
 } from "./actions";
 import { HabitIcon, PlusIcon } from "@/components/ui/icons";
-import { CARD_BASE, LoopIllustration, buttonClass } from "@/components/ui/kit";
+import { CARD_BASE, INPUT, LoopIllustration, buttonClass } from "@/components/ui/kit";
 import type { HabitRow } from "@/lib/api-types/db";
 
 type ManagedHabit = Pick<
@@ -245,7 +245,7 @@ function HabitForm({
           required
           maxLength={80}
           placeholder="e.g. Morning walk"
-          className="h-11 w-full rounded-xl bg-secondary px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground ring-1 ring-border transition-all duration-200 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-ring/45"
+          className={INPUT}
         />
       </div>
       <div className="grid grid-cols-2 gap-3">
@@ -260,7 +260,7 @@ function HabitForm({
             min={1}
             max={31}
             defaultValue={habit?.frequency_count ?? 7}
-            className="h-11 w-full rounded-xl bg-secondary px-3.5 text-[14px] text-foreground ring-1 ring-border transition-all duration-200 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-ring/45"
+            className={INPUT}
           />
         </div>
         <div className="flex flex-col gap-2">
@@ -271,7 +271,7 @@ function HabitForm({
             id="hb-period"
             name="frequency_period"
             defaultValue={habit?.frequency_period ?? "week"}
-            className="h-11 w-full rounded-xl bg-secondary px-3.5 text-[14px] text-foreground ring-1 ring-border transition-all duration-200 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-ring/45"
+            className={INPUT}
           >
             <option value="week">Week</option>
             <option value="month">Month</option>

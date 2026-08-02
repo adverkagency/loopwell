@@ -2,7 +2,10 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { OnboardingWizard } from "@/features/onboarding/wizard";
 
-export const metadata = { title: "Welcome — Loopwell" };
+export const metadata = {
+  title: "Welcome — Loopwell",
+  robots: { index: false, follow: false },
+};
 
 /** First-run only: completed users are bounced straight to Daily. */
 export default async function OnboardingPage() {

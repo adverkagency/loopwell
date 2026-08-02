@@ -42,6 +42,8 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isAppZone = pathname.startsWith("/dashboard");
   const isOnboarding = pathname.startsWith("/onboarding");
+  // Deliberately excludes /reset-password and /verify-email: those must
+  // stay reachable by an authenticated user arriving via a recovery link.
   const isAuthPage =
     pathname === "/login" ||
     pathname === "/register" ||

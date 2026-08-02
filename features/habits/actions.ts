@@ -70,6 +70,11 @@ export async function createHabit(
 
   const { supabase, user } = await requireUser();
 
+  if (parsed.data.in_quick_log) {
+    const overCap = await quickLogAtCap(supabase, user.id);
+    if (overCap) return { error: "Quick Log can only hold 6 habits." };
+  }
+
   const { count } = await supabase
     .from("habits")
     .select("id", { count: "exact", head: true })
@@ -101,6 +106,12 @@ export async function updateHabit(
   if (!parsed.success) return { error: parsed.error.issues[0].message };
 
   const { supabase, user } = await requireUser();
+
+  if (parsed.data.in_quick_log) {
+    const overCap = await quickLogAtCap(supabase, user.id, habitId);
+    if (overCap) return { error: "Quick Log can only hold 6 habits." };
+  }
+
   const { error } = await supabase
     .from("habits")
     .update(parsed.data)
@@ -111,6 +122,23 @@ export async function updateHabit(
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/settings/habits");
   return {};
+}
+
+/** True when the user already has 6 other habits pinned to Quick Log. */
+async function quickLogAtCap(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+  excludeHabitId?: string
+): Promise<boolean> {
+  let query = supabase
+    .from("habits")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .eq("in_quick_log", true)
+    .is("archived_at", null);
+  if (excludeHabitId) query = query.neq("id", excludeHabitId);
+  const { count } = await query;
+  return (count ?? 0) >= 6;
 }
 
 export async function setHabitArchived(
@@ -150,16 +178,19 @@ export async function moveHabit(
 
   const a = habits[idx];
   const b = habits[swap];
-  await supabase
-    .from("habits")
-    .update({ sort_order: b.sort_order })
-    .eq("id", a.id)
-    .eq("user_id", user.id);
-  await supabase
-    .from("habits")
-    .update({ sort_order: a.sort_order })
-    .eq("id", b.id)
-    .eq("user_id", user.id);
+  const [first, second] = await Promise.all([
+    supabase
+      .from("habits")
+      .update({ sort_order: b.sort_order })
+      .eq("id", a.id)
+      .eq("user_id", user.id),
+    supabase
+      .from("habits")
+      .update({ sort_order: a.sort_order })
+      .eq("id", b.id)
+      .eq("user_id", user.id),
+  ]);
+  if (first.error || second.error) return { error: "Couldn't reorder." };
 
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/settings/habits");
@@ -212,10 +243,13 @@ export async function completeOnboarding(input: {
     { onConflict: "habit_id,date" }
   );
 
-  await supabase
+  const { error: profileError } = await supabase
     .from("profiles")
     .update({ timezone: tz, onboarding_completed_at: new Date().toISOString() })
     .eq("id", user.id);
+  if (profileError) {
+    return { error: "Your habits saved, but finishing setup failed — try again." };
+  }
 
   redirect("/dashboard");
 }

@@ -130,12 +130,11 @@ export default async function ChallengesPage() {
   });
 
   // Stamp completion once, the same fire-and-check shape as achievements.
-  for (const card of cards) {
+  const newlyComplete = cards.filter((card) => {
     const joined = joinedBy.get(card.id);
-    if (card.progress?.status === "complete" && joined && !joined.completedAt) {
-      await markChallengeComplete(card.id);
-    }
-  }
+    return card.progress?.status === "complete" && joined && !joined.completedAt;
+  });
+  await Promise.all(newlyComplete.map((card) => markChallengeComplete(card.id)));
 
   return (
     <>

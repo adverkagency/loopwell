@@ -320,6 +320,7 @@ export default function FeaturesPage() {
       />
 
       <section className="mx-auto max-w-7xl px-6 py-24">
+        <h2 className="sr-only">All features</h2>
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((f) => (
             <div

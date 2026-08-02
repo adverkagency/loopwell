@@ -9,10 +9,28 @@ const instrument = Instrument_Sans({
   variable: "--font-instrument",
 });
 
+const title = "Loopwell — Everything that makes up your day, in one calm place";
+const description =
+  "Loopwell brings your habits, water, sleep, weight, nutrition, mood, and goals into one calm daily check-in. Free while in beta.";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
 export const metadata: Metadata = {
-  title: "Loopwell — Everything that makes up your day, in one calm place",
-  description:
-    "Loopwell brings your habits, water, sleep, weight, nutrition, mood, and goals into one calm daily check-in. Free while in beta.",
+  metadataBase: new URL(siteUrl),
+  title,
+  description,
+  openGraph: {
+    title,
+    description,
+    url: siteUrl,
+    siteName: "Loopwell",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary",
+    title,
+    description,
+  },
 };
 
 // One variable webfont for the whole app; system stack stays the fallback.
