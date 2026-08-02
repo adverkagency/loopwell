@@ -3,13 +3,15 @@
 import { useState, useTransition } from "react";
 import { completeOnboarding } from "@/features/habits/actions";
 import { HABIT_TEMPLATES } from "@/features/habits/templates";
+import { createGoal } from "@/features/goals/actions";
+import { GoalForm } from "@/features/goals/goal-board";
 import { CheckIcon, HabitIcon } from "@/components/ui/icons";
 import { buttonClass } from "@/components/ui/kit";
 
 /**
  * First-run Setup Wizard — target under 60 seconds:
  * 1. tap-pick 3–5 starter habits (no typing)
- * 2. goal step: stubbed skip-only in M1 (goal engine lands in M3)
+ * 2. optional single goal, via the same Goals engine as the Goals tab
  * 3. first win → server creates habits + pre-completes the first
  */
 export function OnboardingWizard() {
@@ -17,6 +19,7 @@ export function OnboardingWizard() {
   const [picked, setPicked] = useState<string[]>(
     HABIT_TEMPLATES.slice(0, 3).map((t) => t.name)
   );
+  const [addingGoal, setAddingGoal] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -128,13 +131,24 @@ export function OnboardingWizard() {
             <span className="text-[14px] font-normal text-muted-foreground">(optional)</span>
           </h1>
           <p className="mt-1 text-[13px] text-muted-foreground">
-            Goals arrive with the Goals tab in an upcoming update — you&apos;ll
-            be able to add one there any time. Nothing to do here yet.
+            A distance to run, a book count, a weight to reach — give it a
+            target and Loopwell tracks the gap. Skip it and add one later
+            from the Goals tab.
           </p>
-          <div className="mt-6 rounded-3xl bg-surface ring-1 ring-border p-6 text-[13px] text-muted-foreground shadow-[var(--shadow-e1)]">
-            Coming soon: one simple goal engine for anything you&apos;re working
-            toward — weight, reading, savings, or something entirely your own.
-          </div>
+          {addingGoal ? (
+            <div className="mt-6 rounded-3xl bg-surface ring-1 ring-border p-6 shadow-[var(--shadow-e1)]">
+              <GoalForm
+                action={createGoal}
+                onDone={() => setStep(3)}
+                onCancel={() => setAddingGoal(false)}
+              />
+            </div>
+          ) : (
+            <div className="mt-6 rounded-3xl bg-surface ring-1 ring-border p-6 text-[13px] text-muted-foreground shadow-[var(--shadow-e1)]">
+              Give yourself one thing to work toward — Loopwell tracks the
+              gap between where you are and where you&apos;re headed.
+            </div>
+          )}
           <div className="mt-auto flex justify-between pt-8">
             <button
               type="button"
@@ -143,13 +157,24 @@ export function OnboardingWizard() {
             >
               Back
             </button>
-            <button
-              type="button"
-              onClick={() => setStep(3)}
-              className={buttonClass("primary")}
-            >
-              Skip for now
-            </button>
+            {addingGoal ? null : (
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setStep(3)}
+                  className={buttonClass("ghost")}
+                >
+                  Skip for now
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAddingGoal(true)}
+                  className={buttonClass("primary")}
+                >
+                  Add a goal
+                </button>
+              </div>
+            )}
           </div>
         </section>
       ) : null}
@@ -190,7 +215,7 @@ export function OnboardingWizard() {
               onClick={finish}
               className={buttonClass("primary", "md", "w-full")}
             >
-              {pending ? "Setting things up…" : "Go to your Daily page"}
+              {pending ? "Setting things up…" : "Go to your dashboard"}
             </button>
           </div>
         </section>

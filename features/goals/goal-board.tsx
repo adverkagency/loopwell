@@ -268,14 +268,17 @@ function ProgressEditor({ goal }: { goal: Goal }) {
   );
 }
 
-function GoalForm({
+export function GoalForm({
   goal,
   action,
   onDone,
+  onCancel,
 }: {
   goal?: Goal;
   action: (prev: ActionState, formData: FormData) => Promise<ActionState>;
   onDone: () => void;
+  /** Defaults to onDone — pass a different target when Cancel shouldn't land where a successful save does (e.g. onboarding). */
+  onCancel?: () => void;
 }) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
     async (prev, fd) => {
@@ -323,7 +326,7 @@ function GoalForm({
         <button type="submit" disabled={pending} className="flex min-h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-on-primary shadow-[var(--shadow-e1)] transition hover:bg-primary-hover disabled:opacity-45">
           {pending ? "Saving…" : goal ? "Save changes" : "Save goal"}
         </button>
-        <button type="button" onClick={onDone} className={buttonClass("ghost")}>
+        <button type="button" onClick={onCancel ?? onDone} className={buttonClass("ghost")}>
           Cancel
         </button>
       </div>
